@@ -26,7 +26,6 @@ class FileMenu(tk.Menu):
             filetypes=filetypes
         )
 
-        if not selected_file:
-            return
+        if selected_file:
+            event.emit(EventInfos(selected_file))
 
-        event.emit(EventInfos(selected_file))
