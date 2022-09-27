@@ -4,7 +4,7 @@ from components.menus import file_menu
 
 class MenuBar(tk.Menu):
     def __init__(self, parent: tk.Tk):
-        tk.Menu.__init__(self, parent)
+        super().__init__(parent)
         self._file_menu = file_menu.FileMenu(self)
         self._setup()
 

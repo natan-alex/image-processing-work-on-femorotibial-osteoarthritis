@@ -5,7 +5,7 @@ from events.file_was_selected import event, EventInfos
 
 class FileMenu(tk.Menu):
     def __init__(self, parent: tk.Menu):
-        tk.Menu.__init__(self, master=parent, tearoff=False)
+        super().__init__(master=parent, tearoff=False)
         self._setup()
 
     def _setup(self):
