@@ -1,18 +1,20 @@
 import tkinter as tk
 import tkinter.filedialog as tk_files
-from events.file_was_selected import event, EventInfos
+
+from events.events import (
+    file_selected_event, FileSelectedEventInfos,
+    clear_image_button_clicked
+)
 
 
 class FileMenu(tk.Menu):
     def __init__(self, parent: tk.Menu):
-        super().__init__(master=parent, tearoff=False)
+        super().__init__(parent, tearoff = False)
         self._setup()
 
     def _setup(self):
-        self.add_command(
-            label="Abrir",
-            command=self._open_file_explorer
-        )
+        self.add_command(label = "Abrir", command = self._open_file_explorer)
+        self.add_command(label = "Limpar", command = self._clear_selected_image)
 
     def _open_file_explorer(self):
         filetypes = [
@@ -25,7 +27,9 @@ class FileMenu(tk.Menu):
             title="Escolha uma imagem",
             filetypes=filetypes
         )
-
+        
         if selected_file:
-            event.emit(EventInfos(selected_file))
+            file_selected_event.emit(FileSelectedEventInfos(selected_file))
 
+    def _clear_selected_image(self):
+        clear_image_button_clicked.emit(None)
