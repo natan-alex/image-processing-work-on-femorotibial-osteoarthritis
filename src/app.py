@@ -6,7 +6,7 @@ from components.image_displayer import ImageDisplayer
 
 class App(tk.Tk):
     def __init__(self):
-        tk.Tk.__init__(self)
+        super().__init__()
         self._menubar = MenuBar(self)
         self._image_displayer = ImageDisplayer(self)
         self._setup()
