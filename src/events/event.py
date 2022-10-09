@@ -17,3 +17,19 @@ class Event(Generic[T]):
     def emit(self, infos: T):
         for callback in self._event_handlers:
             callback(infos)
+
+
+EventWithoutInfosHandler = Callable[[], None]
+
+
+class EventWithoutInfos():
+    def __init__(self) -> None:
+        super().__init__()
+        self._event_handlers: List[EventWithoutInfosHandler] = []
+
+    def subscribe(self, handler: EventWithoutInfosHandler):
+        self._event_handlers.append(handler)
+
+    def emit(self):
+        for callback in self._event_handlers:
+            callback()

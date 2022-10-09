@@ -1,4 +1,4 @@
-from events.event import Event
+from events.event import Event, EventWithoutInfos
 
 
 class FileSelectedEventInfos:
@@ -7,4 +7,6 @@ class FileSelectedEventInfos:
 
 
 file_selected_event = Event[FileSelectedEventInfos]()
-clear_image_button_clicked = Event()
+clear_image_button_clicked = EventWithoutInfos()
+clear_selection_button_clicked = EventWithoutInfos()
+select_area_button_clicked = EventWithoutInfos()

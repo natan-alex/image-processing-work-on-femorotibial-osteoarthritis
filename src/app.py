@@ -1,7 +1,7 @@
 import tkinter as tk
 import configs
 from components.menubar import MenuBar
-from components.image_displayer import ImageDisplayer
+from components.images.image_displayer import ImageDisplayer
 
 
 class App(tk.Tk):
