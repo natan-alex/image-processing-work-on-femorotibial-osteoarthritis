@@ -1,5 +1,5 @@
 import tkinter as tk
-import configs
+from configs import APP_DEFAULT_WIDTH, APP_DEFAULT_HEIGHT
 from components.menubar import MenuBar
 from components.images.image_displayer import ImageDisplayer
 
@@ -12,7 +12,7 @@ class App(tk.Tk):
         self._setup()
 
     def _setup(self):
-        height = configs.app_default_height
-        width = configs.app_default_width
+        height = APP_DEFAULT_HEIGHT
+        width = APP_DEFAULT_WIDTH
         self.geometry(f"{width}x{height}")
         self.config(menu = self._menubar)

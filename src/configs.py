@@ -1,2 +1,2 @@
-app_default_width = 800
-app_default_height = 600
+APP_DEFAULT_WIDTH = 800
+APP_DEFAULT_HEIGHT = 600
