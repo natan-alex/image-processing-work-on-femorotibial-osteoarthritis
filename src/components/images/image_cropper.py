@@ -51,8 +51,6 @@ class ImageCropper:
         self._is_activated = False
         self._delete_rectangle()
         self._selected_image = None
-        self._image_margin_left = 0
-        self._image_margin_top = 0
         self._canvas.configure(cursor="")
 
     def _create_rectangle_if_not_exist(self):
