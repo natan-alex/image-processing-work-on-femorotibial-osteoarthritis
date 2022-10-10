@@ -15,4 +15,5 @@ class App(tk.Tk):
         height = APP_DEFAULT_HEIGHT
         width = APP_DEFAULT_WIDTH
         self.geometry(f"{width}x{height}")
-        self.config(menu = self._menubar)
+        self.config(menu=self._menubar)
+        self.resizable(False, False)
