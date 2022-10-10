@@ -74,7 +74,7 @@ class ImageDisplayer(tk.Canvas):
         if image is None:
             return
 
-        if self._text_container:
+        if self._text_container is not None:
             self.delete(self._text_container)
 
         self._image = image
@@ -84,7 +84,7 @@ class ImageDisplayer(tk.Canvas):
         self._cropper.set_selected_image(self._image)
 
     def _on_clear_image_button_click(self):
-        if self._image_container:
+        if self._image_container is not None:
             self.delete(self._image_container)
 
         self._image = None
@@ -98,7 +98,7 @@ class ImageDisplayer(tk.Canvas):
         self._cropped_image = None
 
     def _on_enter_selection_mode_button_click(self):
-        if self._image:
+        if self._image is not None:
             self._cropper.activate()
 
     def _on_leave_selection_mode_button_click(self):
