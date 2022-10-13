@@ -5,6 +5,11 @@ from components.menus.interactions_menu import InteractionsMenu
 
 
 class MenuBar(tk.Menu):
+    """
+    Class that is the menu bar with the tabs of the
+    main screen
+    """
+
     def __init__(self, parent: tk.Tk):
         super().__init__(parent)
         self._file_menu = FileMenu(self)

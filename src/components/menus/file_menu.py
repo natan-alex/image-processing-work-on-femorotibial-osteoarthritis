@@ -9,6 +9,11 @@ from events.events import (
 
 
 class FileMenu(tk.Menu):
+    """
+    Class that contains options for files related tab
+    Emits an event when an option is selected
+    """
+
     def __init__(self, parent: tk.Menu):
         super().__init__(parent, tearoff=False)
         self._setup()

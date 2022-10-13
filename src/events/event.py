@@ -7,6 +7,14 @@ EventHandler = Callable[[T], None]
 
 
 class Event(Generic[T]):
+    """
+    Class that represents an event, with possibilities
+    to notify the subscribers when the event occurr and
+    subscribe to it
+    This event carries some information to pass to its
+    subscribers
+    """
+
     def __init__(self) -> None:
         super().__init__()
         self._event_handlers: List[EventHandler] = []
@@ -23,6 +31,11 @@ EventWithoutInfosHandler = Callable[[], None]
 
 
 class EventWithoutInfos():
+    """
+    Very similar to event class, but cannot
+    notify the observers with any information
+    """
+
     def __init__(self) -> None:
         super().__init__()
         self._event_handlers: List[EventWithoutInfosHandler] = []
