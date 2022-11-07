@@ -2,7 +2,6 @@ import tkinter as tk
 from PIL import Image
 from typing import Tuple
 
-from components.image_util import ImageUtil
 from events.events import (
     area_selection_finished, AreaSelectionFinishedEventInfos
 )
@@ -22,10 +21,10 @@ class Drawer:
         self._rectangle = None
         self._image_margin_left = 0
         self._image_margin_top = 0
-        self._start_x = 0
-        self._start_y = 0
-        self._end_x = 0
-        self._end_y = 0
+        self._rectangle_start_x = 0
+        self._rectangle_start_y = 0
+        self._rectangle_end_x = 0
+        self._rectangle_end_y = 0
         self._setup()
 
     def _setup(self):
@@ -56,10 +55,15 @@ class Drawer:
         """
 
         self._selected_image = image
+
         self._delete_rectangle()
-        self._image_margin_left, self._image_margin_top = ImageUtil \
-            .get_left_and_top_margins_from_image_to_canvas(
-                self._selected_image, self._canvas)
+
+        canvas_width = self._canvas.winfo_width()
+        canvas_height = self._canvas.winfo_height()
+        image_width, image_height = image.size
+
+        self._image_margin_left = (canvas_width - image_width) / 2
+        self._image_margin_top = (canvas_height - image_height) / 2
 
     def activate(self):
         """
@@ -87,8 +91,8 @@ class Drawer:
 
         if self._rectangle is None:
             self._rectangle = self._canvas.create_rectangle(
-                self._start_x, self._start_y,
-                self._start_x + 1, self._start_y + 1,
+                self._rectangle_start_x, self._rectangle_start_y,
+                self._rectangle_start_x + 1, self._rectangle_start_y + 1,
                 outline="red")
 
     def _move_rectangle_coordinates(self):
@@ -100,8 +104,8 @@ class Drawer:
         if self._rectangle is not None:
             self._canvas.coords(
                 self._rectangle,
-                self._start_x, self._start_y,
-                self._end_x, self._end_y)
+                self._rectangle_start_x, self._rectangle_start_y,
+                self._rectangle_end_x, self._rectangle_end_y)
 
     def _on_mouse_press(self, event):
         """
@@ -116,8 +120,8 @@ class Drawer:
 
         self._delete_rectangle()
 
-        self._start_x = self._canvas.canvasx(event.x)
-        self._start_y = self._canvas.canvasx(event.y)
+        self._rectangle_start_x = self._canvas.canvasx(event.x)
+        self._rectangle_start_y = self._canvas.canvasx(event.y)
 
     def _on_mouse_move(self, event):
         """
@@ -130,8 +134,8 @@ class Drawer:
 
         self._create_rectangle_if_not_exist()
 
-        self._end_x = self._canvas.canvasx(event.x)
-        self._end_y = self._canvas.canvasy(event.y)
+        self._rectangle_end_x = self._canvas.canvasx(event.x)
+        self._rectangle_end_y = self._canvas.canvasy(event.y)
 
         self._move_rectangle_coordinates()
 
@@ -147,10 +151,10 @@ class Drawer:
             return
 
         coordinates = (
-            self._start_x - self._image_margin_left,
-            self._start_y - self._image_margin_top,
-            self._end_x - self._image_margin_left,
-            self._end_y - self._image_margin_top,
+            self._rectangle_start_x - self._image_margin_left,
+            self._rectangle_start_y - self._image_margin_top,
+            self._rectangle_end_x - self._image_margin_left,
+            self._rectangle_end_y - self._image_margin_top,
         )
 
         cropped_image = self._selected_image.crop(coordinates)
