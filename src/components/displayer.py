@@ -1,10 +1,11 @@
 import tkinter as tk
 from PIL import ImageTk
 
-from events.events import *
+from events import events
 from configs import APP_DEFAULT_WIDTH, APP_DEFAULT_HEIGHT
-from components.image_util import ImageUtil
 from components.drawer import Drawer
+from components.displayer_helper import DisplayerHelper
+from services.correlation_service import CorrelationService
 
 
 class Displayer(tk.Canvas):
@@ -30,7 +31,38 @@ class Displayer(tk.Canvas):
         self._image = None
         self._photo_image = None
         self._cropped_image = None
-        self._setup()
+
+        self._configure()
+
+    def _configure(self):
+        """
+        Init component things, place itself in the app
+        and listen to all menu events to handle them
+        """
+
+        self._create_text_container_with_no_image_message()
+        self.pack(fill=tk.BOTH, anchor=tk.NW, padx=0, pady=0)
+        self._subscribe_to_events()
+
+    def _subscribe_to_events(self):
+        events.select_image_button_clicked.subscribe(
+            self._on_select_image_button_click)
+        events.clear_image_button_clicked.subscribe(
+            self._on_clear_image_button_click)
+        events.clear_selection_button_clicked.subscribe(
+            self._on_clear_selection_button_click)
+        events.enter_selection_mode_button_clicked.subscribe(
+            self._on_enter_selection_mode_button_click)
+        events.leave_selection_mode_button_clicked.subscribe(
+            self._on_leave_selection_mode_button_click)
+        events.show_cropped_image_button_clicked.subscribe(
+            self._on_show_cropped_image_button_click)
+        events.area_selection_finished.subscribe(
+            self._on_area_selection_finished)
+        events.save_cropped_image_button_clicked.subscribe(
+            self._on_save_cropped_image_button_click)
+        events.find_cross_correlation_button_clicked.subscribe(
+            self._on_find_cross_correlation_button_click)
 
     def _create_text_container_with_no_image_message(self):
         """
@@ -57,55 +89,22 @@ class Displayer(tk.Canvas):
             self._canvas_height / 2,
             image=self._photo_image)
 
-    def _setup(self):
-        """
-        Init component things, place itself in the app
-        and listen to all menu events to handle them
-        """
-
-        self._create_text_container_with_no_image_message()
-        self.pack(fill=tk.BOTH, anchor=tk.NW, padx=0, pady=0)
-
-        select_image_button_clicked.subscribe(
-            self._on_select_image_button_click)
-        clear_image_button_clicked.subscribe(
-            self._on_clear_image_button_click)
-        clear_selection_button_clicked.subscribe(
-            self._on_clear_selection_button_click)
-        enter_selection_mode_button_clicked.subscribe(
-            self._on_enter_selection_mode_button_click)
-        leave_selection_mode_button_clicked.subscribe(
-            self._on_leave_selection_mode_button_click)
-        show_cropped_image_button_clicked.subscribe(
-            self._on_show_cropped_image_button_click)
-        area_selection_finished.subscribe(
-            self._on_area_selection_finished)
-        save_cropped_image_button_clicked.subscribe(
-            self._on_save_cropped_image_button_click)
-        find_cross_correlation_button_clicked.subscribe(
-            self._on_find_cross_correlation_button_click)
-
     def _on_select_image_button_click(self):
         """
         Handle for select image menu item click event
         Opens the file and show the image in the screen
         """
 
-        image_path = ImageUtil.ask_to_open_file()
-
-        if image_path is None:
-            return
-
-        image = ImageUtil.try_open(image_path)
+        image = DisplayerHelper.ask_open_image_and_get_result()
 
         if image is None:
             return
 
+        self._image, self._photo_image = image, ImageTk.PhotoImage(image)
+
         if self._text_container is not None:
             self.delete(self._text_container)
 
-        self._image = image
-        self._photo_image = ImageTk.PhotoImage(image)
         self._create_image_container()
 
     def _on_clear_image_button_click(self):
@@ -156,20 +155,18 @@ class Displayer(tk.Canvas):
 
     def _on_area_selection_finished(
         self,
-        event: AreaSelectionFinishedEventInfos
+        event: events.AreaSelectionFinishedEventInfos
     ):
         """
         Handler for when the area was been drawn
         Just store the cropped image for further use
         """
 
-        if not self._drawer.is_activated:
-            return
-
-        if not self._drawer.has_selection:
-            return
-
-        if self._image is None:
+        if (
+            not self._drawer.is_activated or
+            not self._drawer.has_selection or
+            self._image is None
+        ):
             return
 
         self._cropped_image = event.cropped_image
@@ -194,7 +191,7 @@ class Displayer(tk.Canvas):
         if self._cropped_image is None:
             return
 
-        ImageUtil.save(self._cropped_image)
+        DisplayerHelper.try_save_image(self._cropped_image)
 
     def _on_find_cross_correlation_button_click(self):
         """
@@ -206,19 +203,13 @@ class Displayer(tk.Canvas):
         if self._image is None:
             return
 
-        template_path = ImageUtil.ask_to_open_file()
-
-        if template_path is None:
-            return
-
-        template_image = ImageUtil.try_open(template_path)
+        template_image = DisplayerHelper.ask_open_image_and_get_result()
 
         if template_image is None:
             return
 
-        start_point, end_point = ImageUtil.find_cross_correlation_between(
-            self._image,
-            template_image)
+        start_point, end_point = CorrelationService \
+            .find_cross_correlation_between(self._image, template_image)
 
         self._drawer.draw_rectangle_considering_image_margins(
             start_point, end_point)
