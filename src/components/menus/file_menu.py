@@ -16,9 +16,10 @@ class FileMenu(tk.Menu):
 
     def __init__(self, parent: tk.Menu):
         super().__init__(parent, tearoff=False)
-        self._setup()
 
-    def _setup(self):
+        self._add_menu_items()
+
+    def _add_menu_items(self):
         self.add_command(
             label="Selecionar imagem",
             command=self._open_file_explorer)

@@ -12,11 +12,13 @@ class MenuBar(tk.Menu):
 
     def __init__(self, parent: tk.Tk):
         super().__init__(parent)
+
         self._file_menu = FileMenu(self)
         self._interactions_menu = InteractionsMenu(self)
-        self._setup()
 
-    def _setup(self):
+        self._add_submenus()
+
+    def _add_submenus(self):
         self.add_cascade(label="Imagens", menu=self._file_menu)
         self.add_cascade(label="Interações", menu=self._interactions_menu)
 

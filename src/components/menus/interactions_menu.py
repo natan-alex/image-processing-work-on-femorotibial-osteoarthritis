@@ -16,9 +16,9 @@ class InteractionsMenu(tk.Menu):
 
     def __init__(self, parent: tk.Menu):
         super().__init__(parent, tearoff=False)
-        self._setup()
+        self._add_menu_items()
 
-    def _setup(self):
+    def _add_menu_items(self):
         self.add_command(
             label="Entrar no modo de seleção",
             command=self._on_select_area_button_click)
