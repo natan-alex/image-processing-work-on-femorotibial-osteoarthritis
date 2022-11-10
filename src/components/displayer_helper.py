@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import tkinter.filedialog as tk_files
 import tkinter.messagebox as tk_boxes
 from PIL import Image
@@ -11,11 +13,14 @@ class DisplayerHelper:
 
     @staticmethod
     def try_save_image(image: Image):
+        if image is None:
+            return
+
         try:
             file_name = tk_files.asksaveasfile(
                 initialdir="~",
                 initialfile="Sem nome",
-                defaultextension="jpg",
+                defaultextension=".jpg",
                 filetypes=DisplayerHelper.filetypes
             )
 
@@ -36,3 +41,17 @@ class DisplayerHelper:
             return Image.open(path)
         except Exception:
             tk_boxes.showerror(message="Falha ao abrir imagem")
+
+    @staticmethod
+    def resize_image_if_necessary(
+        image: Image,
+        resize_to: Tuple[int, int]
+    ) -> Image:
+        if image is None:
+            return None
+
+        try:
+            if image.size[0] > resize_to[0] and image.size[1] > resize_to[1]:
+                return image.resize(resize_to, Image.ANTIALIAS)
+        except Exception:
+            return None

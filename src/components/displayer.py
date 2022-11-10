@@ -32,16 +32,16 @@ class Displayer(tk.Canvas):
         self._photo_image = None
         self._cropped_image = None
 
-        self._configure()
+        self._do_setup()
 
-    def _configure(self):
+    def _do_setup(self):
         """
         Init component things, place itself in the app
         and listen to all menu events to handle them
         """
 
-        self._create_text_container_with_no_image_message()
         self.pack(fill=tk.BOTH, anchor=tk.NW, padx=0, pady=0)
+        self._create_text_container_with_no_image_message()
         self._subscribe_to_events()
 
     def _subscribe_to_events(self):
@@ -96,6 +96,8 @@ class Displayer(tk.Canvas):
         """
 
         image = DisplayerHelper.ask_open_image_and_get_result()
+        resize_to = (self._canvas_width, self._canvas_height)
+        image = DisplayerHelper.resize_image_if_necessary(image, resize_to)
 
         if image is None:
             return
