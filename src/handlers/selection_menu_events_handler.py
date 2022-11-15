@@ -207,8 +207,11 @@ class SelectionMenuEventsHandler:
         )
 
     def _on_show_selection_image_button_clicked(self):
-        if self._app.cropped_image is not None:
-            self._app.cropped_image.show()
+        if self._app.cropped_image is None:
+            tk_boxes.showerror("Nenhuma selecao de area feita")
+            return
+
+        self._app.cropped_image.show()
 
     def _on_save_selection_image_button_clicked(self):
         if self._app.cropped_image is None:

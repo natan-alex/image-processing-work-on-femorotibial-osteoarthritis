@@ -102,6 +102,7 @@ class ImageMenuEventsHandler:
         image = self._open_image()
 
         if image is None:
+            tk_boxes.showerror(message="Falha ao abrir imagem")
             return
 
         image = self._resize_image_to_fit_on_canvas(image)
@@ -125,11 +126,13 @@ class ImageMenuEventsHandler:
 
     def _on_find_cross_correlation_button_clicked(self):
         if self._app.selected_image is None:
+            tk_boxes.showerror(message="Necessário selecionar uma imagem antes")
             return
 
         template_image = self._open_image()
 
         if template_image is None:
+            tk_boxes.showerror(message="Nenhuma imagem escolhida para encontrar a correlação")
             return
 
         correlation_points = CorrelationService \
@@ -138,6 +141,7 @@ class ImageMenuEventsHandler:
                 template_image)
 
         if correlation_points is None:
+            tk_boxes.showerror(message="Falha ao encontrar correlação entre imagens")
             return
 
         start_point, end_point = correlation_points

@@ -3,12 +3,11 @@ import tkinter as tk
 from events.events import (
     select_image_button_clicked,
     clear_image_button_clicked,
-    save_cropped_image_button_clicked,
-    show_cropped_image_button_clicked,
+    find_cross_correlation_button_clicked,
 )
 
 
-class FileMenu(tk.Menu):
+class ImageMenu(tk.Menu):
     """
     Class that contains options for files related tab
     Emits an event when an option is selected
@@ -25,16 +24,12 @@ class FileMenu(tk.Menu):
             command=self._open_file_explorer)
 
         self.add_command(
-            label="Visualizar imagem do recorte",
-            command=self._on_show_cropped_image_button_click)
-
-        self.add_command(
-            label="Salvar imagem do recorte",
-            command=self._on_save_cropped_image_button_click)
-
-        self.add_command(
             label="Remover imagem selecionada",
             command=self._clear_selected_image)
+
+        self.add_command(
+            label="Encontrar correlação cruzada com outra imagem",
+            command=self._find_cross_correlation_button_click)
 
     def _open_file_explorer(self):
         select_image_button_clicked.emit()
@@ -42,8 +37,5 @@ class FileMenu(tk.Menu):
     def _clear_selected_image(self):
         clear_image_button_clicked.emit()
 
-    def _on_show_cropped_image_button_click(self):
-        show_cropped_image_button_clicked.emit()
-
-    def _on_save_cropped_image_button_click(self):
-        save_cropped_image_button_clicked.emit()
+    def _find_cross_correlation_button_click(self):
+        find_cross_correlation_button_clicked.emit()

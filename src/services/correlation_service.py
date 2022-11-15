@@ -20,12 +20,14 @@ class CorrelationService:
                 cv2.TM_CCOEFF_NORMED
             )
 
-            template_height, template_width, _ = template_as_np_array.shape
+            template_height = template_as_np_array.shape[0]
+            template_width = template_as_np_array.shape[1]
             y, x = np.unravel_index(np.argmax(correlation), correlation.shape)
 
             return (
                 (x, y),
                 (x + template_width, y + template_height)
             )
-        except Exception:
+        except Exception as e:
+            print(f"Exception on CorrelationService: {e}")
             return None

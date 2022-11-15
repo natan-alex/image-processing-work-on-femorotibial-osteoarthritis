@@ -4,11 +4,12 @@ from events.events import (
     clear_selection_button_clicked,
     enter_selection_mode_button_clicked,
     leave_selection_mode_button_clicked,
-    find_cross_correlation_button_clicked,
+    save_cropped_image_button_clicked,
+    show_cropped_image_button_clicked,
 )
 
 
-class InteractionsMenu(tk.Menu):
+class SelectionMenu(tk.Menu):
     """
     Class that contains options for interactions related tab
     Emits an event when an option is selected
@@ -28,12 +29,16 @@ class InteractionsMenu(tk.Menu):
             command=self._on_clear_selection_button_click)
 
         self.add_command(
-            label="Sair do modo de seleção",
-            command=self._on_leave_selection_mode_button_click)
+            label="Visualizar imagem da seleção",
+            command=self._on_show_cropped_image_button_click)
 
         self.add_command(
-            label="Encontrar correlação cruzada",
-            command=self._find_cross_correlation_button_click)
+            label="Salvar imagem da seleção",
+            command=self._on_save_cropped_image_button_click)
+
+        self.add_command(
+            label="Sair do modo de seleção",
+            command=self._on_leave_selection_mode_button_click)
 
     def _on_select_area_button_click(self):
         enter_selection_mode_button_clicked.emit()
@@ -44,5 +49,8 @@ class InteractionsMenu(tk.Menu):
     def _on_leave_selection_mode_button_click(self):
         leave_selection_mode_button_clicked.emit()
 
-    def _find_cross_correlation_button_click(self):
-        find_cross_correlation_button_clicked.emit()
+    def _on_show_cropped_image_button_click(self):
+        show_cropped_image_button_clicked.emit()
+
+    def _on_save_cropped_image_button_click(self):
+        save_cropped_image_button_clicked.emit()
