@@ -1,10 +1,8 @@
-import app
+from app import App
+from handlers.app_events_handlers import AppEventsHandlers
 
 
-def main():
-    window = app.App()
-    window.mainloop()
-
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    app = App()
+    handlers = AppEventsHandlers(app)
+    app.run()
