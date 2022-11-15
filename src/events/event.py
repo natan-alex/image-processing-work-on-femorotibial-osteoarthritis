@@ -1,9 +1,11 @@
-from typing import Callable, Generic, List, TypeVar
+from typing import Callable, Tuple, Generic, List, TypeVar
 
 
 T = TypeVar("T")
 
-EventHandler = Callable[[T], None]
+EventWithInfosHandler = Callable[[T], None]
+EventWithoutInfosHandler = Callable[[], None]
+Handler = Tuple[EventWithInfosHandler, EventWithoutInfosHandler]
 
 
 class Event(Generic[T]):
@@ -17,32 +19,14 @@ class Event(Generic[T]):
 
     def __init__(self) -> None:
         super().__init__()
-        self._event_handlers: List[EventHandler] = []
+        self._event_handlers: List[Handler] = []
 
-    def subscribe(self, handler: EventHandler):
+    def subscribe(self, handler: Handler):
         self._event_handlers.append(handler)
 
-    def emit(self, infos: T):
+    def emit(self, infos: Tuple[T, None] = None):
         for callback in self._event_handlers:
-            callback(infos)
-
-
-EventWithoutInfosHandler = Callable[[], None]
-
-
-class EventWithoutInfos():
-    """
-    Very similar to event class, but cannot
-    notify the observers with any information
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-        self._event_handlers: List[EventWithoutInfosHandler] = []
-
-    def subscribe(self, handler: EventWithoutInfosHandler):
-        self._event_handlers.append(handler)
-
-    def emit(self):
-        for callback in self._event_handlers:
-            callback()
+            if infos is None:
+                callback()
+            else:
+                callback(infos)

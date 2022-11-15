@@ -9,7 +9,7 @@ class CorrelationService:
     def find_cross_correlation_between(
         image: Image,
         template: Image,
-    ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    ) -> Tuple[Tuple[int, int], Tuple[int, int], None]:
         try:
             image_as_np_array = np.array(image)
             template_as_np_array = np.array(template)
@@ -27,6 +27,5 @@ class CorrelationService:
                 (x, y),
                 (x + template_width, y + template_height)
             )
-        except Exception as e:
-            print(e)
+        except Exception:
             return None
