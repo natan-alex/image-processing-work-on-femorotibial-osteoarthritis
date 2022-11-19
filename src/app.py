@@ -1,7 +1,7 @@
 import tkinter.messagebox as tk_boxes
 from typing import Tuple
-from PIL.Image import Image
 
+from aliases import Image
 from events import events
 from components.window.main_window import MainWindow
 from components.canvas.main_canvas import MainCanvas
@@ -10,6 +10,10 @@ from components.menus.menu_bar import MenuBar
 
 from services.image_service import ImageService
 from services.correlation_service import CorrelationService
+
+
+import tkinter
+from tkinter import ttk
 
 
 class App:

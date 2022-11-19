@@ -1,7 +1,8 @@
 import tkinter as tk
 from typing import Tuple
-from PIL.Image import Image
 from PIL import ImageTk
+
+from aliases import Image
 
 
 class MainCanvas(tk.Canvas):

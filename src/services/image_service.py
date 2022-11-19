@@ -1,8 +1,8 @@
 import tkinter.filedialog as tk_files
-from typing import Tuple
 from PIL import Image as PilImages
-from PIL.Image import Image
+from typing import Tuple
 
+from aliases import Image
 from configs import ALLOWED_IMAGE_FILE_TYPES
 
 
