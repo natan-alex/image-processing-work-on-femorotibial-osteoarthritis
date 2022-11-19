@@ -6,28 +6,42 @@ from PIL import Image
 
 class CorrelationService:
     @staticmethod
+    def _find_correlation_point(image: np.ndarray, template: np.ndarray):
+        try:
+            correlation = cv2.matchTemplate(
+                image, template, cv2.TM_CCOEFF_NORMED
+            )
+
+            argmax = np.argmax(correlation)
+            y, x = np.unravel_index(argmax, correlation.shape)
+
+            return (x, y)
+        except Exception as e:
+            print(f"Exception on CorrelationService.find_correlation_point: {e}")
+            return None
+
+    @staticmethod
     def find_cross_correlation_between(
         image: Image,
         template: Image,
     ) -> Tuple[Tuple[int, int], Tuple[int, int], None]:
         try:
-            image_as_np_array = np.array(image)
-            template_as_np_array = np.array(template)
+            image_array = np.array(image)
+            template_array = np.array(template)
 
-            correlation = cv2.matchTemplate(
-                image_as_np_array,
-                template_as_np_array,
-                cv2.TM_CCOEFF_NORMED
-            )
+            point = CorrelationService. \
+                _find_correlation_point(image_array, template_array)
 
-            template_height = template_as_np_array.shape[0]
-            template_width = template_as_np_array.shape[1]
-            y, x = np.unravel_index(np.argmax(correlation), correlation.shape)
+            if point is None:
+                return None
+
+            template_height = template_array.shape[0]
+            template_width = template_array.shape[1]
 
             return (
-                (x, y),
-                (x + template_width, y + template_height)
+                (point[0], point[1]),
+                (point[0] + template_width, point[1] + template_height)
             )
         except Exception as e:
-            print(f"Exception on CorrelationService: {e}")
+            print(f"Exception on CorrelationService.find_cross_correlation_between: {e}")
             return None

@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+from typing import Tuple
 from events.event import Event
 
 
@@ -17,3 +19,12 @@ save_cropped_image_button_clicked = Event()
 find_cross_correlation_button_clicked = Event()
 equalize_histogram_button_clicked = Event()
 cross_correlation_calculated = Event()
+
+
+@dataclass
+class RectangleFinishedDrawingEventInfos:
+    start_point: Tuple[int, int]
+    end_point: Tuple[int, int]
+
+
+rectangle_finished_drawing = Event[RectangleFinishedDrawingEventInfos]()
