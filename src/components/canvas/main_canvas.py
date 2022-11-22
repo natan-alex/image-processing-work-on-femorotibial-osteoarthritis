@@ -6,22 +6,14 @@ from aliases import Image
 
 
 class MainCanvas(tk.Canvas):
-    def __init__(self, window: tk.Tk):
+    def __init__(self, parent: tk.Frame):
         super().__init__(
-            window,
-            width=window.winfo_width(),
-            height=window.winfo_height(),
-            borderwidth=0,
-            highlightthickness=0)
+            parent,
+            width=parent.winfo_width(),
+            height=parent.winfo_height())
 
         self._text_container = None
         self._image_container = None
-
-        self._pack_and_update()
-
-    def _pack_and_update(self):
-        self.pack(fill=tk.BOTH, anchor=tk.NW, padx=0, pady=0)
-        self.update()
 
     def get_margins_for(self, image: Image) -> Tuple[int, int]:
         canvas_width, canvas_height = (self.winfo_width(), self.winfo_height())

@@ -1,11 +1,11 @@
-from typing import Callable, Tuple, Generic, List, TypeVar
+from typing import Callable, Union, Generic, List, TypeVar
 
 
 T = TypeVar("T")
 
 EventWithInfosHandler = Callable[[T], None]
 EventWithoutInfosHandler = Callable[[], None]
-Handler = Tuple[EventWithInfosHandler, EventWithoutInfosHandler]
+Handler = Union[EventWithInfosHandler, EventWithoutInfosHandler]
 
 
 class Event(Generic[T]):
@@ -24,7 +24,7 @@ class Event(Generic[T]):
     def subscribe(self, handler: Handler):
         self._event_handlers.append(handler)
 
-    def emit(self, infos: Tuple[T, None] = None):
+    def emit(self, infos: Union[T, None] = None):
         for callback in self._event_handlers:
             if infos is None:
                 callback()

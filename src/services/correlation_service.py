@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Union
 from aliases import Image
 
 
@@ -24,7 +24,7 @@ class CorrelationService:
     def find_cross_correlation_between(
         image: Image,
         template: Image,
-    ) -> Tuple[Tuple[int, int], Tuple[int, int], None]:
+    ) -> Union[Tuple[int, int], Tuple[int, int], None]:
         try:
             image_array = np.array(image)
             template_array = np.array(template)
