@@ -19,6 +19,7 @@ save_cropped_image_button_clicked = Event()
 find_cross_correlation_button_clicked = Event()
 equalize_histogram_button_clicked = Event()
 cross_correlation_calculated = Event()
+train_model_button_clicked = Event()
 
 
 @dataclass

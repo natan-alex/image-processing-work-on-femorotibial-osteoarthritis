@@ -1,0 +1,95 @@
+import os
+import tkinter.filedialog as tk_files
+from typing import Union
+from dataclasses import dataclass
+
+from aliases import FoldersClassesAndFiles
+from configs import ALLOWED_IMAGE_FILE_TYPES
+from definitions.models.classes import ModelClasses
+from definitions.models.expected_subfolders import ExpectedSubfoldersInChosenFolder
+
+
+@dataclass
+class ReadFilesResult:
+    error: Union[str, None] = None
+    folder_classes_and_files: Union[FoldersClassesAndFiles, None] = None
+
+
+class TrainingModelService:
+    file_types = [
+        ("Imagens", " ".join(ALLOWED_IMAGE_FILE_TYPES)),
+        ("Todos os arquivos", "*.*")
+    ]
+
+    subfolders_error_message = """
+    A pasta escolhida deve conter as seguintes subpastas:
+    {0}
+    Essas subpastas ({0}) correspondem a cada uma das etapas de construção do modelo.
+    Cada uma dessas subpastas deve conter as seguintes "subsubpastas":
+    {1}
+    Essas "subsubpastas" ({1}) correspondem a cada uma das possíveis classes de uma imagem.
+    Essas "subsubpastas" são as que devem conter de fato as imagens que serão utilizadas pelo modelo
+    """.format(
+        ", ".join(list(ExpectedSubfoldersInChosenFolder)),
+        ", ".join(list(ModelClasses)))
+
+    @staticmethod
+    def read_model_related_folders_and_files() -> ReadFilesResult:
+        try:
+            folder_path = tk_files.askdirectory(
+                initialdir="~",
+                title="Escolha a pasta que contém os arquivos de treino",
+            )
+
+            if not TrainingModelService._are_folder_subfolders_valid(folder_path):
+                return ReadFilesResult(error=TrainingModelService.subfolders_error_message)
+
+            return ReadFilesResult(
+                folder_classes_and_files=TrainingModelService
+                ._get_classes_and_corresponding_files_from(folder_path))
+        except Exception as e:
+            print(f"Exception on MultipleFilesService.read_files_and_corresponding_classes: {e}")
+            return ReadFilesResult(error=f"Something wrong happened. Error: {e}")
+
+    @staticmethod
+    def _are_folder_subfolders_valid(folder_path: str) -> bool:
+        if not os.path.isdir(folder_path):
+            return False
+
+        folder_content = os.listdir(folder_path)
+
+        for subfolder in list(ExpectedSubfoldersInChosenFolder):
+            if subfolder.value not in folder_content:
+                return False
+
+            subfolder_path = os.path.join(folder_path, subfolder.value)
+            subfolder_content = os.listdir(subfolder_path)
+
+            for clasz in list(ModelClasses):
+                if clasz.value not in subfolder_content:
+                    return False
+
+        return True
+
+    @staticmethod
+    def _is_file_an_allowed_image(file_name: str) -> bool:
+        _, file_extension = os.path.splitext(file_name)
+        return file_extension in ALLOWED_IMAGE_FILE_TYPES
+
+    @staticmethod
+    def _get_classes_and_corresponding_files_from(folder_path: str) -> FoldersClassesAndFiles:
+        folder_classes_and_files: FoldersClassesAndFiles = {}
+
+        for subfolder in list(ExpectedSubfoldersInChosenFolder):
+            folder_classes_and_files[subfolder.value] = {}
+
+            subfolder_path = os.path.join(folder_path, subfolder.value)
+
+            for clasz in list(ModelClasses):
+                class_folder_path = os.path.join(subfolder_path, clasz.value)
+                class_folder_content = os.listdir(class_folder_path)
+
+                folder_classes_and_files[subfolder.value][clasz.value] = list(filter(
+                    TrainingModelService._is_file_an_allowed_image, class_folder_content))
+
+        return folder_classes_and_files
