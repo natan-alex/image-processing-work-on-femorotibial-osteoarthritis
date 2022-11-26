@@ -17,6 +17,8 @@ class AsideBox(tk.Frame):
         self,
         folders_classes_and_files: aliases.FoldersClassesAndFiles
     ):
+        tk.Label(self._parent, text="Sobre o diretório escolhido:").pack()
+
         tk.Label(self._parent, text="Para o treinamento:").pack()
         train = folders_classes_and_files[Folders.TRAIN]
         self._display_file_count_for_each_model_class(train)

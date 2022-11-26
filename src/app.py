@@ -38,7 +38,7 @@ class App:
         events.show_cropped_image_button_clicked.subscribe(self._on_show_cropped_image_button_clicked)
         events.save_cropped_image_button_clicked.subscribe(self._on_save_cropped_image_button_clicked)
         events.find_cross_correlation_button_clicked.subscribe(self._on_find_cross_correlation_button_clicked)
-        events.train_model_button_clicked.subscribe(self._on_train_model_button_clicked)
+        events.read_model_main_directory_button_clicked.subscribe(self._on_read_model_main_directory_button_clicked)
 
     def _on_select_image_button_clicked(self):
         self._selected_image = ImageService.open_image()
@@ -128,7 +128,7 @@ class App:
             start_point=(start_point[0] + margin_left, start_point[1] + margin_top),
             end_point=(end_point[0] + margin_left, end_point[1] + margin_top))
 
-    def _on_train_model_button_clicked(self):
+    def _on_read_model_main_directory_button_clicked(self):
         result = TrainingModelService.read_model_related_folders_and_files()
 
         if result.error is not None:

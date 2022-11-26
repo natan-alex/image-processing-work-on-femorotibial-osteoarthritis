@@ -3,7 +3,7 @@ import tkinter as tk
 from components.menus.image_menu import ImageMenu
 from components.menus.selection_menu import SelectionMenu
 from components.menus.data_increase_menu import DataIncreaseMenu
-from components.menus.ia_related_menu import IaRelatedMenu
+from components.menus.ai_related_menu import AiRelatedMenu
 
 
 class MenuBar(tk.Menu):
@@ -18,7 +18,7 @@ class MenuBar(tk.Menu):
         self._image_menu = ImageMenu(self)
         self._selection_menu = SelectionMenu(self)
         self._data_increase_menu = DataIncreaseMenu(self)
-        self._ia_related_menu = IaRelatedMenu(self)
+        self._ia_related_menu = AiRelatedMenu(self)
 
         self._add_submenus()
 
