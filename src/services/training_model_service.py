@@ -1,23 +1,15 @@
 import os
 import tkinter.filedialog as tk_files
-from typing import Union
-from dataclasses import dataclass
 
-from aliases import FoldersClassesAndFiles
-from configs import ALLOWED_IMAGE_FILE_TYPES
-from definitions.models.classes import ModelClasses
-from definitions.models.expected_subfolders import ExpectedSubfoldersInChosenFolder
-
-
-@dataclass
-class ReadFilesResult:
-    error: Union[str, None] = None
-    folder_classes_and_files: Union[FoldersClassesAndFiles, None] = None
+from globals import aliases, configs
+from entities.model_related.model_classes import ModelClasses
+from entities.model_related.expected_subfolders import ExpectedSubfolders
+from entities.model_related.read_dir_result import ReadDirResult
 
 
 class TrainingModelService:
     file_types = [
-        ("Imagens", " ".join(ALLOWED_IMAGE_FILE_TYPES)),
+        ("Imagens", " ".join(configs.ALLOWED_IMAGE_FILE_TYPES)),
         ("Todos os arquivos", "*.*")
     ]
 
@@ -30,11 +22,11 @@ class TrainingModelService:
     Essas "subsubpastas" ({1}) correspondem a cada uma das possíveis classes de uma imagem.
     Essas "subsubpastas" são as que devem conter de fato as imagens que serão utilizadas pelo modelo
     """.format(
-        ", ".join(list(ExpectedSubfoldersInChosenFolder)),
+        ", ".join(list(ExpectedSubfolders)),
         ", ".join(list(ModelClasses)))
 
     @staticmethod
-    def read_model_related_folders_and_files() -> ReadFilesResult:
+    def read_model_related_folders_and_files() -> ReadDirResult:
         try:
             folder_path = tk_files.askdirectory(
                 initialdir="~",
@@ -42,14 +34,14 @@ class TrainingModelService:
             )
 
             if not TrainingModelService._are_folder_subfolders_valid(folder_path):
-                return ReadFilesResult(error=TrainingModelService.subfolders_error_message)
+                return ReadDirResult(error=TrainingModelService.subfolders_error_message)
 
-            return ReadFilesResult(
+            return ReadDirResult(
                 folder_classes_and_files=TrainingModelService
                 ._get_classes_and_corresponding_files_from(folder_path))
         except Exception as e:
             print(f"Exception on MultipleFilesService.read_files_and_corresponding_classes: {e}")
-            return ReadFilesResult(error=f"Something wrong happened. Error: {e}")
+            return ReadDirResult(error=f"Something wrong happened. Error: {e}")
 
     @staticmethod
     def _are_folder_subfolders_valid(folder_path: str) -> bool:
@@ -58,7 +50,7 @@ class TrainingModelService:
 
         folder_content = os.listdir(folder_path)
 
-        for subfolder in list(ExpectedSubfoldersInChosenFolder):
+        for subfolder in list(ExpectedSubfolders):
             if subfolder.value not in folder_content:
                 return False
 
@@ -74,13 +66,15 @@ class TrainingModelService:
     @staticmethod
     def _is_file_an_allowed_image(file_name: str) -> bool:
         _, file_extension = os.path.splitext(file_name)
-        return file_extension in ALLOWED_IMAGE_FILE_TYPES
+        return file_extension in configs.ALLOWED_IMAGE_FILE_TYPES
 
     @staticmethod
-    def _get_classes_and_corresponding_files_from(folder_path: str) -> FoldersClassesAndFiles:
-        folder_classes_and_files: FoldersClassesAndFiles = {}
+    def _get_classes_and_corresponding_files_from(
+        folder_path: str
+    ) -> aliases.FoldersClassesAndFiles:
+        folder_classes_and_files: aliases.FoldersClassesAndFiles = {}
 
-        for subfolder in list(ExpectedSubfoldersInChosenFolder):
+        for subfolder in list(ExpectedSubfolders):
             folder_classes_and_files[subfolder.value] = {}
 
             subfolder_path = os.path.join(folder_path, subfolder.value)

@@ -2,20 +2,30 @@ import tkinter as tk
 from typing import Tuple
 from PIL import ImageTk
 
-from aliases import Image
+from globals import aliases
 
 
-class MainCanvas(tk.Canvas):
-    def __init__(self, parent: tk.Frame):
-        super().__init__(
-            parent,
-            width=parent.winfo_width(),
-            height=parent.winfo_height())
+class Canvas(tk.Canvas):
+    def __init__(self, parent: tk.Toplevel):
+        super().__init__(parent)
+
+        self.configure(width=parent.winfo_width())
+        self.configure(height=parent.winfo_height())
+
+        self.pack(fill=tk.BOTH)
+
+        self.update()
 
         self._text_container = None
         self._image_container = None
 
-    def get_margins_for(self, image: Image) -> Tuple[int, int]:
+    def get_margins_for(self, image: aliases.Image) -> Tuple[int, int]:
+        """
+        Computes the space between the window and the image
+        on center, the space from the (0, 0) to the top left
+        corner of the image
+        """
+
         canvas_width, canvas_height = (self.winfo_width(), self.winfo_height())
         image_width, image_height = (image.size[0], image.size[1])
         margin_left, margin_top = (0, 0)
@@ -48,7 +58,7 @@ class MainCanvas(tk.Canvas):
             self.winfo_height() / 2,
             text="Nenhuma imagem selecionada")
 
-    def display_image(self, image: Image):
+    def display_image(self, image: aliases.Image):
         """
         Create a space inside the canvas to display the image
         """

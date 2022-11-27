@@ -1,12 +1,6 @@
 import tkinter as tk
 
-from events.events import (
-    clear_selection_button_clicked,
-    enter_selection_mode_button_clicked,
-    leave_selection_mode_button_clicked,
-    save_cropped_image_button_clicked,
-    show_cropped_image_button_clicked,
-)
+from globals import events
 
 
 class SelectionMenu(tk.Menu):
@@ -41,16 +35,16 @@ class SelectionMenu(tk.Menu):
             command=self._on_leave_selection_mode_button_click)
 
     def _on_select_area_button_click(self):
-        enter_selection_mode_button_clicked.emit()
+        events.enter_selection_mode_button_clicked.emit()
 
     def _on_clear_selection_button_click(self):
-        clear_selection_button_clicked.emit()
+        events.clear_selection_button_clicked.emit()
 
     def _on_leave_selection_mode_button_click(self):
-        leave_selection_mode_button_clicked.emit()
+        events.leave_selection_mode_button_clicked.emit()
 
     def _on_show_cropped_image_button_click(self):
-        show_cropped_image_button_clicked.emit()
+        events.show_cropped_image_button_clicked.emit()
 
     def _on_save_cropped_image_button_click(self):
-        save_cropped_image_button_clicked.emit()
+        events.save_cropped_image_button_clicked.emit()

@@ -2,18 +2,17 @@ import tkinter.filedialog as tk_files
 from PIL import Image as PilImages
 from typing import Tuple
 
-from aliases import Image
-from configs import ALLOWED_IMAGE_FILE_TYPES
+from globals import aliases, configs
 
 
 class ImageService:
     file_types = [
-        ("Imagens", " ".join(ALLOWED_IMAGE_FILE_TYPES)),
+        ("Imagens", " ".join(configs.ALLOWED_IMAGE_FILE_TYPES)),
         ("Todos os arquivos", "*.*")
     ]
 
     @staticmethod
-    def open_image() -> Image:
+    def open_image() -> aliases.Image:
         try:
             path = tk_files.askopenfilename(
                 initialdir="~",
@@ -21,13 +20,16 @@ class ImageService:
                 filetypes=ImageService.file_types
             )
 
+            if path is None:
+                return None
+
             return PilImages.open(path)
         except Exception as e:
             print(f"Exception on ImageService.open_image: {e}")
             return None
 
     @staticmethod
-    def resize_image(image: Image, width: int, height: int) -> Image:
+    def resize_image(image: aliases.Image, width: int, height: int) -> aliases.Image:
         try:
             image_width = image.size[0]
             image_height = image.size[1]
@@ -49,14 +51,17 @@ class ImageService:
             return image
 
     @staticmethod
-    def save_image(image: Image) -> bool:
+    def save_image(image: aliases.Image) -> bool:
         try:
             file_name = tk_files.asksaveasfile(
                 initialdir="~",
                 initialfile="Sem nome",
-                defaultextension=ALLOWED_IMAGE_FILE_TYPES[0],
+                defaultextension=configs.ALLOWED_IMAGE_FILE_TYPES[0],
                 filetypes=ImageService.file_types
             )
+
+            if file_name is None:
+                return False
 
             image.save(file_name)
             return True
@@ -66,12 +71,12 @@ class ImageService:
 
     @staticmethod
     def crop_image(
-        image: Image,
+        image: aliases.Image,
         start_point: Tuple[int, int],
         end_point: Tuple[int, int],
         margin_left: int = 0,
         margin_top: int = 0,
-    ) -> Image:
+    ) -> aliases.Image:
         try:
             coordinates = (
                 start_point[0] - margin_left, start_point[1] - margin_top,
@@ -84,7 +89,7 @@ class ImageService:
             return image
 
     @staticmethod
-    def show_image(image: Image):
+    def show_image(image: aliases.Image):
         try:
             image.show()
         except Exception as e:

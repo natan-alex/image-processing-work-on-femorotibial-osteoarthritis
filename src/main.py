@@ -1,5 +1,5 @@
-from app import App
-
+from windows.main.main_window import MainWindow
 
 if __name__ == "__main__":
-    App().run()
+    window = MainWindow()
+    window.mainloop()

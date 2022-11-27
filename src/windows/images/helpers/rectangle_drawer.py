@@ -1,7 +1,7 @@
 import tkinter as tk
 from typing import Tuple
 
-from events.events import (
+from globals.events import (
     rectangle_finished_drawing, RectangleFinishedDrawingEventInfos
 )
 
