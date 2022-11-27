@@ -1,30 +1,23 @@
 import tkinter as tk
 
-from globals import events
-
 from windows.images.menus.selection_menu import SelectionMenu
+from windows.images.menus.actions_menu import ActionsMenu
 
 
 class MenuBar(tk.Menu):
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)
 
-        self._add_menu_items()
+        self._selection_menu = SelectionMenu(self)
+        self._actions_menu = ActionsMenu(self)
 
-    def _add_menu_items(self):
-        self.add_command(
-            label="Selecionar imagem",
-            command=self._open_file_explorer)
-
-        self.add_command(
-            label="Remover imagem selecionada",
-            command=self._clear_selected_image)
+        self._add_submenus()
 
     def _add_submenus(self):
-        self.add_cascade(label="Seleção", menu=SelectionMenu(self))
+        self.add_cascade(
+            label="Ações",
+            menu=self._actions_menu)
 
-    def _open_file_explorer(self):
-        events.select_image_button_clicked.emit()
-
-    def _clear_selected_image(self):
-        events.clear_image_button_clicked.emit()
+        self.add_cascade(
+            label="Seleção",
+            menu=self._selection_menu)

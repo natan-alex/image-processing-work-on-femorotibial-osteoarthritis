@@ -87,7 +87,7 @@ class RectangleDrawer:
 
         self._move_rectangle_coordinates()
 
-    def _on_mouse_release(self, event):
+    def _on_mouse_release(self, _):
         if not self._is_activated:
             return
 

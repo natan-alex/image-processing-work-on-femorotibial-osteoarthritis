@@ -1,6 +1,6 @@
 import tkinter.filedialog as tk_files
 from PIL import Image as PilImages
-from typing import Tuple
+from typing import Tuple, Union
 
 from globals import aliases, configs
 
@@ -12,7 +12,7 @@ class ImageService:
     ]
 
     @staticmethod
-    def open_image() -> aliases.Image:
+    def open_image() -> Union[aliases.Image, None]:
         try:
             path = tk_files.askopenfilename(
                 initialdir="~",
@@ -29,8 +29,15 @@ class ImageService:
             return None
 
     @staticmethod
-    def resize_image(image: aliases.Image, width: int, height: int) -> aliases.Image:
+    def resize_image(
+        image: aliases.Image,
+        width: int,
+        height: int
+    ) -> Union[aliases.Image, None]:
         try:
+            if image is None:
+                return None
+
             image_width = image.size[0]
             image_height = image.size[1]
             new_image_width = image_width
@@ -53,6 +60,9 @@ class ImageService:
     @staticmethod
     def save_image(image: aliases.Image) -> bool:
         try:
+            if image is None:
+                return False
+
             file_name = tk_files.asksaveasfile(
                 initialdir="~",
                 initialfile="Sem nome",
@@ -76,8 +86,11 @@ class ImageService:
         end_point: Tuple[int, int],
         margin_left: int = 0,
         margin_top: int = 0,
-    ) -> aliases.Image:
+    ) -> Union[aliases.Image, None]:
         try:
+            if image is None:
+                return image
+
             coordinates = (
                 start_point[0] - margin_left, start_point[1] - margin_top,
                 end_point[0] - margin_left, end_point[1] - margin_top,
@@ -91,6 +104,9 @@ class ImageService:
     @staticmethod
     def show_image(image: aliases.Image):
         try:
+            if image is None:
+                return
+
             image.show()
         except Exception as e:
             print(f"Exception on ImageService.show_image: {e}")
