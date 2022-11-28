@@ -2,7 +2,6 @@ import tkinter as tk
 
 from globals import events
 
-
 class MenuBar(tk.Menu):
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)

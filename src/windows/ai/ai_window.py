@@ -11,7 +11,7 @@ from services.training_model_service import TrainingModelService
 
 
 class AiWindow(tk.Toplevel):
-    _classes_and_files: Union[aliases.ClassesAndFiles, None] = None
+    _folders_classes_and_files: Union[aliases.FoldersClassesAndFiles, None] = None
 
     def __init__(self):
         super().__init__()
@@ -44,5 +44,4 @@ class AiWindow(tk.Toplevel):
 
         self._folders_classes_and_files = result.folder_classes_and_files
 
-        self._files_infos_box.display_folders_classes_and_files_infos(
-            self._folders_classes_and_files)
+        self._files_infos_box.display_folders_classes_and_files_infos(self._folders_classes_and_files)

@@ -3,7 +3,7 @@ import tkinter as tk
 from globals import events
 
 
-class ActionsMenu(tk.Menu):
+class CorrelationsMenu(tk.Menu):
     def __init__(self, parent: tk.Menu):
         super().__init__(parent, tearoff=False)
 
@@ -11,22 +11,8 @@ class ActionsMenu(tk.Menu):
 
     def _add_menu_items(self):
         self.add_command(
-            label="Selecionar imagem",
-            command=self._open_file_explorer)
-
-        self.add_command(
-            label="Remover imagem selecionada",
-            command=self._clear_selected_image)
-
-        self.add_command(
             label="Encontrar correlação cruzada com outra imagem",
             command=self._find_cross_correlation)
 
     def _find_cross_correlation(self):
         events.find_cross_correlation_button_clicked.emit()
-
-    def _open_file_explorer(self):
-        events.select_image_button_clicked.emit()
-
-    def _clear_selected_image(self):
-        events.clear_image_button_clicked.emit()

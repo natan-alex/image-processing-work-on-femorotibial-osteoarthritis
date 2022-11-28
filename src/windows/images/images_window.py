@@ -15,6 +15,8 @@ from services.correlation_service import CorrelationService
 class ImagesWindow(tk.Toplevel):
     _selected_image: Union[aliases.Image, None] = None
     _cropped_image: Union[aliases.Image, None] = None
+    _equalized_image: Union[aliases.Image, None] = None
+    _flipped_image: Union[aliases.Image, None] = None
 
     def __init__(self):
         super().__init__()
@@ -29,6 +31,8 @@ class ImagesWindow(tk.Toplevel):
         self._handle_events()
 
     def _init_components(self):
+        """ Init necessary components """
+
         self.config(menu=MenuBar(self))
 
         self._canvas = Canvas(self)
@@ -37,7 +41,7 @@ class ImagesWindow(tk.Toplevel):
         self._canvas.display_no_image_message()
 
     def _handle_events(self):
-        """ Just subscribe to the events related to images in images window """
+        """ Just subscribe to the image related events """
 
         events.select_image_button_clicked.subscribe(self._on_select_image_button_clicked)
         events.clear_image_button_clicked.subscribe(self._on_clear_image_button_clicked)
@@ -48,6 +52,8 @@ class ImagesWindow(tk.Toplevel):
         events.show_cropped_image_button_clicked.subscribe(self._on_show_cropped_image_button_clicked)
         events.save_cropped_image_button_clicked.subscribe(self._on_save_cropped_image_button_clicked)
         events.find_cross_correlation_button_clicked.subscribe(self._on_find_cross_correlation_button_clicked)
+        events.histogram_equalization_button_clicked.subscribe(self._on_histogram_equalization_button_clicked)
+        events.horizontal_mirroring_button_clicked.subscribe(self._on_horizontal_mirroring_button_clicked)
 
     def _on_select_image_button_clicked(self):
         """
@@ -70,12 +76,16 @@ class ImagesWindow(tk.Toplevel):
         self._canvas.display_image(self._selected_image)
 
     def _on_clear_image_button_clicked(self):
+        """ Just removes the image being displayed """
+
         self._rectangle_drawer.deactivate()
         self._canvas.display_no_image_message()
         self._selected_image = None
         self._cropped_image = None
 
     def _on_enter_selection_mode_button_clicked(self):
+        """ Make possible for the user to draw rectangles to make selections """
+
         if self._selected_image is None:
             tk_boxes.showwarning(message="Nenhuma imagem foi escolhida ainda")
             return
@@ -83,16 +93,25 @@ class ImagesWindow(tk.Toplevel):
         self._rectangle_drawer.activate()
 
     def _on_leave_selection_mode_button_clicked(self):
+        """ Disable the rectangle drawer and remove previous selection """
+
         self._rectangle_drawer.deactivate()
         self._cropped_image = None
 
     def _on_clear_selection_button_clicked(self):
+        """ Remove previous selection """
+
         self._cropped_image = None
         self._rectangle_drawer.delete_rectangle()
 
     def _on_rectangle_finished_drawing(
         self, event_infos: events.RectangleFinishedDrawingEventInfos
     ):
+        """
+        After the rectangle being drawn, crop the selected image 
+        in the area considering its margins to the canvas
+        """
+
         margin_left, margin_top = self._canvas. \
             get_margins_for(self._selected_image)
 
@@ -102,6 +121,8 @@ class ImagesWindow(tk.Toplevel):
             margin_left, margin_top)
 
     def _on_show_cropped_image_button_clicked(self):
+        """ Show the selection as an image """
+
         if self._cropped_image is None:
             tk_boxes.showwarning(message="Nenhuma seleção foi feita ainda")
             return
@@ -109,6 +130,8 @@ class ImagesWindow(tk.Toplevel):
         ImageService.show_image(self._cropped_image)
 
     def _on_save_cropped_image_button_clicked(self):
+        """ Save selection into file system """
+
         if self._cropped_image is None:
             tk_boxes.showwarning(message="Nenhuma seleção foi feita ainda")
             return
@@ -116,6 +139,11 @@ class ImagesWindow(tk.Toplevel):
         ImageService.save_image(self._cropped_image)
 
     def _on_find_cross_correlation_button_clicked(self):
+        """
+        Ask the user the other image to correlate with. After 
+        finding the correlation, draw it as a rectangle on the screen
+        """
+
         if self._selected_image is None:
             tk_boxes.showwarning(message="Necessário selecionar uma imagem antes")
             return
@@ -141,3 +169,37 @@ class ImagesWindow(tk.Toplevel):
         self._rectangle_drawer.draw_rectangle(
             start_point=(start_point[0] + margin_left, start_point[1] + margin_top),
             end_point=(end_point[0] + margin_left, end_point[1] + margin_top))
+
+    def _on_histogram_equalization_button_clicked(self):
+        if self._selected_image is None:
+            tk_boxes.showwarning(message="Necessário selecionar uma imagem antes")
+            return
+
+        self._equalized_image = ImageService.equalize_histogram(self._selected_image)
+
+        if self._equalized_image is None:
+            tk_boxes.showerror("Falha ao equalizar histograma da imagem")
+            return
+
+        ImageService.show_image(self._equalized_image)
+
+        if tk_boxes.askquestion("Salvar", "Deseja salvar a imagem?") == "yes":
+            ImageService.save_image(self._equalized_image)
+
+    def _on_horizontal_mirroring_button_clicked(self):
+        """ Flip image horizontally and display it """
+
+        if self._selected_image is None:
+            tk_boxes.showwarning(message="Necessário selecionar uma imagem antes")
+            return
+
+        self._flipped_image = ImageService.flip_horizontally(self._selected_image)
+
+        if self._flipped_image is None:
+            tk_boxes.showerror("Falha ao realizar espelhamento horizontal da imagem")
+            return
+
+        ImageService.show_image(self._flipped_image)
+
+        if tk_boxes.askquestion("Salvar", "Deseja salvar a imagem?") == "yes":
+            ImageService.save_image(self._flipped_image)
