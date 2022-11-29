@@ -7,6 +7,11 @@ from globals.events import (
 
 
 class RectangleDrawer:
+    """
+    A class for drawing rectangles on a canvas 
+    with the mouse movements
+    """
+
     def __init__(self, canvas: tk.Canvas):
         self._canvas = canvas
         self._is_activated = False
@@ -88,6 +93,12 @@ class RectangleDrawer:
         self._move_rectangle_coordinates()
 
     def _on_mouse_release(self, _):
+        """
+        Handle mouse release event. Computes the end 
+        point of the rectangle and consider if it 
+        was drawn from bottom to up or the reverse
+        """
+
         if not self._is_activated:
             return
 
@@ -110,12 +121,16 @@ class RectangleDrawer:
     def deactivate(self):
         self._is_activated = False
         self._canvas.configure(cursor="")
-        self.delete_rectangle()
 
     def draw_rectangle(
-        self, start_point: Tuple[int, int], end_point: Tuple[int, int]
+        self,
+        start_point: Tuple[int, int],
+        end_point: Tuple[int, int]
     ):
+        """ Get the rectangle coordinates and draw it """
+
         self.delete_rectangle()
+
         self._rectangle = self._canvas.create_rectangle(
             start_point[0], start_point[1],
             end_point[0], end_point[1],

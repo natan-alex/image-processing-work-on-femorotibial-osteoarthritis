@@ -3,6 +3,11 @@ import tkinter as tk
 from globals import events
 
 class MenuBar(tk.Menu):
+    """ 
+    The menu bar for the ai window. 
+    Agregate submenus in a single bar
+    """
+
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)
 

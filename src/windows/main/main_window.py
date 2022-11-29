@@ -6,6 +6,8 @@ from windows.ai.ai_window import AiWindow
 
 
 class MainWindow(tk.Tk):
+    """ Class that represents the main app window """
+
     def __init__(self):
         super().__init__()
         self.title("Trabalho de Processamento e Análise de Imagens")
@@ -21,18 +23,20 @@ class MainWindow(tk.Tk):
         self._add_ai_button()
 
     def _add_images_button(self):
+        """ Add the button to open the images window """
+
         images_button = tk.Button(self, text="Imagens")
-        images_button.configure(foreground="blue")
         images_button.configure(borderwidth=1)
-        images_button.configure(font=("", 16))
+        images_button.configure(font=("", 15))
         images_button.configure(command=self._create_images_window)
         images_button.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
 
     def _add_ai_button(self):
+        """ Add the button to open the ai window """
+
         images_button = tk.Button(self, text="IA")
-        images_button.configure(foreground="blue")
         images_button.configure(borderwidth=1)
-        images_button.configure(font=("", 16))
+        images_button.configure(font=("", 15))
         images_button.configure(command=self._create_ai_related_window)
         images_button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 

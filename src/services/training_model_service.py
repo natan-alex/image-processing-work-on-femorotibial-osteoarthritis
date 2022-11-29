@@ -27,6 +27,13 @@ class TrainingModelService:
 
     @staticmethod
     def read_model_related_folders_and_files() -> ReadDirResult:
+        """
+        Ask user for the directory that contains the 
+        directories with the files for model training,
+        testing and validation. Check if the folder
+        structure is valid also
+        """
+
         try:
             folder_path = tk_files.askdirectory(
                 initialdir="~",
@@ -45,6 +52,11 @@ class TrainingModelService:
 
     @staticmethod
     def _are_folder_subfolders_valid(folder_path: str) -> bool:
+        """
+        Check if the selected directory contains the 
+        necessary and expected model files
+        """
+
         if not os.path.isdir(folder_path):
             return False
 
@@ -65,6 +77,11 @@ class TrainingModelService:
 
     @staticmethod
     def _is_file_an_allowed_image(file_name: str) -> bool:
+        """
+        Check if the file extension is one 
+        of the allowed ones
+        """
+
         _, file_extension = os.path.splitext(file_name)
         return file_extension in configs.ALLOWED_IMAGE_FILE_TYPES
 
@@ -72,6 +89,11 @@ class TrainingModelService:
     def _get_classes_and_corresponding_files_from(
         folder_path: str
     ) -> aliases.FoldersClassesAndFiles:
+        """
+        Read the selected directory content and
+        the contents of the expected directories
+        """
+
         folder_classes_and_files: aliases.FoldersClassesAndFiles = {}
 
         for subfolder in list(ExpectedSubfolders):

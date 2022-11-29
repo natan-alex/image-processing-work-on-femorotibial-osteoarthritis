@@ -52,6 +52,7 @@ cross_correlation_calculated = Event()
 read_model_main_directory_button_clicked = Event()
 histogram_equalization_button_clicked = Event()
 horizontal_mirroring_button_clicked = Event()
+train_neural_network_button_clicked = Event()
 
 
 @dataclass

@@ -7,7 +7,16 @@ from globals import aliases
 
 class CorrelationService:
     @staticmethod
-    def _find_correlation_point(image: np.ndarray, template: np.ndarray):
+    def _find_correlation_point(
+        image: np.ndarray,
+        template: np.ndarray
+    ) -> Union[Tuple[int, int], None]:
+        """
+        Calculate the correlation between the 
+        images and find the corresponding point in 
+        the image 
+        """
+
         try:
             correlation = cv2.matchTemplate(
                 image, template, cv2.TM_CCOEFF_NORMED
@@ -25,7 +34,12 @@ class CorrelationService:
     def find_cross_correlation_between(
         image: aliases.Image,
         template: aliases.Image,
-    ) -> Union[Tuple[int, int], Tuple[int, int], None]:
+    ) -> Union[Tuple[Tuple[int, int], Tuple[int, int]], None]:
+        """
+        Calculate images correlation and return the
+        rectangular area that represents the match
+        """
+
         try:
             image_array = np.array(image)
             template_array = np.array(template)

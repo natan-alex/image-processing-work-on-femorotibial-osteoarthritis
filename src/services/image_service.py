@@ -15,6 +15,11 @@ class ImageService:
 
     @staticmethod
     def open_image() -> Union[aliases.Image, None]:
+        """
+        Open file explorer and allow user to select
+        an image
+        """
+
         try:
             path = tk_files.askopenfilename(
                 initialdir="~",
@@ -36,6 +41,11 @@ class ImageService:
         width: int,
         height: int
     ) -> Union[aliases.Image, None]:
+        """
+        Resize image if its size is greater than
+        the new width and height
+        """
+
         if image is None:
             return None
 
@@ -61,6 +71,8 @@ class ImageService:
 
     @staticmethod
     def save_image(image: aliases.Image) -> bool:
+        """ Save image into the file system """
+
         if image is None:
             return False
 
@@ -89,6 +101,11 @@ class ImageService:
         margin_left: int = 0,
         margin_top: int = 0,
     ) -> Union[aliases.Image, None]:
+        """
+        Crop image in the rectangle formed by the 
+        given points considering the margins
+        """
+
         if image is None:
             return image
 
@@ -105,6 +122,8 @@ class ImageService:
 
     @staticmethod
     def show_image(image: aliases.Image):
+        """ Show the image with the os image app """
+
         if image is None:
             return
 
@@ -115,6 +134,11 @@ class ImageService:
 
     @staticmethod
     def equalize_histogram(image: aliases.Image) -> Union[aliases.Image, None]:
+        """
+        Equalize the image histogram and return 
+        the result
+        """
+
         if image is None:
             return None
 
@@ -128,6 +152,8 @@ class ImageService:
 
     @staticmethod
     def flip_horizontally(image: aliases.Image) -> Union[aliases.Image, None]:
+        """ Mirror the image and return the result """
+
         if image is None:
             return None
 

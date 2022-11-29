@@ -13,6 +13,13 @@ from services.correlation_service import CorrelationService
 
 
 class ImagesWindow(tk.Toplevel):
+    """
+    Class that represents the images window.
+    Contains menus to realize operations on images,
+    as open an image, display it, crop it using
+    a drawn rectangle, etc
+    """
+
     _selected_image: Union[aliases.Image, None] = None
     _cropped_image: Union[aliases.Image, None] = None
     _equalized_image: Union[aliases.Image, None] = None
@@ -171,6 +178,10 @@ class ImagesWindow(tk.Toplevel):
             end_point=(end_point[0] + margin_left, end_point[1] + margin_top))
 
     def _on_histogram_equalization_button_clicked(self):
+        """
+        Equalize the selected image histogram and display 
+        the resulting image
+        """
         if self._selected_image is None:
             tk_boxes.showwarning(message="Necessário selecionar uma imagem antes")
             return

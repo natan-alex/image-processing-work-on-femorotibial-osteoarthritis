@@ -6,6 +6,11 @@ from globals import aliases
 
 
 class Canvas(tk.Canvas):
+    """
+    A canvas for displaying the selected image
+    and drawing rectangles to crop the image
+    """
+
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)
 

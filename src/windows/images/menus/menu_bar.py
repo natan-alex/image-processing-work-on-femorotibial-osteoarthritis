@@ -7,6 +7,11 @@ from windows.images.menus.correlations_menu import CorrelationsMenu
 
 
 class MenuBar(tk.Menu):
+    """
+    Agregate the submenus in a menu bar
+    for the images window
+    """
+
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)
 
