@@ -8,7 +8,7 @@ from windows.ai.components.operations_frame import OperationsFrame
 from windows.ai.menus.menu_bar import MenuBar
 from windows.ai.components.files_infos_frame import FilesInfosFrame
 
-from services.model_folders_and_files_service import ModelFoldersAndFilesService
+from services.folders_and_files_service import FoldersAndFilesService
 
 
 class AiWindow(tk.Toplevel):
@@ -47,6 +47,8 @@ class AiWindow(tk.Toplevel):
             self._on_read_model_main_directory_button_clicked)
         events.train_neural_network_button_clicked.subscribe(
             self._on_train_neural_network_button_clicked)
+        events.train_normal_classifier_button_clicked.subscribe(
+            self._on_train_normal_classifier_button_clicked)
 
     def _on_read_model_main_directory_button_clicked(self):
         """
@@ -55,7 +57,7 @@ class AiWindow(tk.Toplevel):
         validation folders with the model images
         """
 
-        result = ModelFoldersAndFilesService.read_model_related_folders_and_files()
+        result = FoldersAndFilesService.read_model_related_folders_and_files()
 
         if result.error is not None:
             tk_boxes.showerror("Falha ao treinar modelo", message=result.error)
@@ -67,4 +69,7 @@ class AiWindow(tk.Toplevel):
         self._operations_frame.display_things()
 
     def _on_train_neural_network_button_clicked(self):
+        self._operations_frame.hide_things()
+
+    def _on_train_normal_classifier_button_clicked(self):
         self._operations_frame.hide_things()
