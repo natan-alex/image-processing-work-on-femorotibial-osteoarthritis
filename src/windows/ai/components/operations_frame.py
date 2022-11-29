@@ -3,7 +3,7 @@ import tkinter as tk
 from globals import events
 
 
-class Operations(tk.Frame):
+class OperationsFrame(tk.Frame):
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)
 

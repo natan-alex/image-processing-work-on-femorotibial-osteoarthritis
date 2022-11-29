@@ -3,10 +3,10 @@ import tkinter.messagebox as tk_boxes
 from typing import Union
 
 from globals import events, aliases, configs
-from windows.ai.components.operations import Operations
+from windows.ai.components.operations_frame import OperationsFrame
 
 from windows.ai.menus.menu_bar import MenuBar
-from windows.ai.components.files_infos_box import FilesInfos
+from windows.ai.components.files_infos_frame import FilesInfosFrame
 
 from services.training_model_service import TrainingModelService
 
@@ -34,8 +34,8 @@ class AiWindow(tk.Toplevel):
 
     def _init_components(self):
         self.config(menu=MenuBar(self))
-        self._files_infos_frame = FilesInfos(self)
-        self._operations_frame = Operations(self)
+        self._files_infos_frame = FilesInfosFrame(self)
+        self._operations_frame = OperationsFrame(self)
 
         self._files_infos_frame.pack(
             fill=tk.Y, side=tk.LEFT, anchor=tk.CENTER)

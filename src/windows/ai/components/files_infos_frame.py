@@ -13,7 +13,7 @@ subfolders_and_titles = {
 }
 
 
-class FilesInfos(tk.Frame):
+class FilesInfosFrame(tk.Frame):
     """
     Class for displaying the selected directory 
     infos with the amount of files for each folder
