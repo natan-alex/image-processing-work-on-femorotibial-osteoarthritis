@@ -7,7 +7,7 @@ from entities.model_related.expected_subfolders import ExpectedSubfolders
 from entities.model_related.read_dir_result import ReadDirResult
 
 
-class TrainingModelService:
+class ModelFoldersAndFilesService:
     file_types = [
         ("Imagens", " ".join(configs.ALLOWED_IMAGE_FILE_TYPES)),
         ("Todos os arquivos", "*.*")
@@ -40,11 +40,11 @@ class TrainingModelService:
                 title="Escolha a pasta que contém os arquivos de treino",
             )
 
-            if not TrainingModelService._are_folder_subfolders_valid(folder_path):
-                return ReadDirResult(error=TrainingModelService.subfolders_error_message)
+            if not ModelFoldersAndFilesService._are_folder_subfolders_valid(folder_path):
+                return ReadDirResult(error=ModelFoldersAndFilesService.subfolders_error_message)
 
             return ReadDirResult(
-                folder_classes_and_files=TrainingModelService
+                folder_classes_and_files=ModelFoldersAndFilesService
                 ._get_classes_and_corresponding_files_from(folder_path))
         except Exception as e:
             print(f"Exception on MultipleFilesService.read_files_and_corresponding_classes: {e}")
@@ -106,6 +106,6 @@ class TrainingModelService:
                 class_folder_content = os.listdir(class_folder_path)
 
                 folder_classes_and_files[subfolder.value][clasz.value] = list(filter(
-                    TrainingModelService._is_file_an_allowed_image, class_folder_content))
+                    ModelFoldersAndFilesService._is_file_an_allowed_image, class_folder_content))
 
         return folder_classes_and_files

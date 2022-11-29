@@ -8,7 +8,7 @@ from windows.ai.components.operations_frame import OperationsFrame
 from windows.ai.menus.menu_bar import MenuBar
 from windows.ai.components.files_infos_frame import FilesInfosFrame
 
-from services.training_model_service import TrainingModelService
+from services.model_folders_and_files_service import ModelFoldersAndFilesService
 
 
 class AiWindow(tk.Toplevel):
@@ -55,7 +55,7 @@ class AiWindow(tk.Toplevel):
         validation folders with the model images
         """
 
-        result = TrainingModelService.read_model_related_folders_and_files()
+        result = ModelFoldersAndFilesService.read_model_related_folders_and_files()
 
         if result.error is not None:
             tk_boxes.showerror("Falha ao treinar modelo", message=result.error)
