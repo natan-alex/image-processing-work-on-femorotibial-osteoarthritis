@@ -51,15 +51,18 @@ class AiWindow(tk.Toplevel):
         validation folders with the model images
         """
 
+        self._main_frame.display_loading_message()
+
         result = DatasetService.read_datasets()
 
         if result.error is not None:
             tk_boxes.showerror("Falha ao ler diretório", message=result.error)
+            self._main_frame.display_no_folder_and_files_message()
             return
 
         self._model_datasets = result.datasets
 
-        self._main_frame.display_model_folders_and_files_infos(self._model_datasets)
+        self._main_frame.display_datasets_infos(self._model_datasets)
 
     def _on_train_neural_network_button_clicked(self):
         if self._model_datasets is None:

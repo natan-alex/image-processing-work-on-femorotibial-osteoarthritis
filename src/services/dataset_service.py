@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import tensorflow as tf
 import tkinter.filedialog as tk_files
 
@@ -45,7 +46,7 @@ class DatasetService:
                 if clasz.value not in subfolder_content:
                     return MainFolderValidationResult(
                         is_valid=False,
-                        error=f"A subpasta para a classe  {clasz.value}  não foi encontrada na subpasta  {subfolder.value}") 
+                        error=f"A subpasta para a classe  {clasz.value}  não foi encontrada na subpasta  {subfolder.value}")
 
         return MainFolderValidationResult(is_valid=True)
 
@@ -59,7 +60,7 @@ class DatasetService:
             image_size=configs.MODEL_IMAGES_SIZE,
             class_names=[c.value for c in ModelClasses]
         )
-    
+
     @staticmethod
     def _read_datasets_from(path: str) -> aliases.Datasets:
         datasets: aliases.Datasets = {}
@@ -73,7 +74,7 @@ class DatasetService:
     @staticmethod
     def read_datasets() -> ReadDatasetsResult:
         """
-        Ask user for the directory that contains the 
+        Ask user for the directory that contains the
         directories with the files for model training,
         testing and validation. Check if the folder
         structure is valid also
@@ -96,3 +97,17 @@ class DatasetService:
         except Exception as e:
             print(f"Exception on MultipleFilesService.read_model_folders_and_files: {e}")
             return ReadDatasetsResult(error="Um erro inesperado aconteceu")
+
+    @staticmethod
+    def get_file_count_per_class_in(
+        dataset: aliases.Dataset
+    ) -> aliases.ClassFileCount:
+        file_count: aliases.ClassFileCount = {c:0 for c in ModelClasses}
+
+        for _, labels_batch in dataset:
+            for labels in labels_batch:
+                index = np.where(labels == 1)[0][0]
+                clasz = dataset.class_names[index]
+                file_count[clasz] += 1
+
+        return file_count

@@ -1,8 +1,11 @@
 import tkinter as tk
+from entities.model_related.model_classes import ModelClasses
 
 from globals import aliases
 
 from entities.model_related.expected_subfolders import ExpectedSubfolders
+
+from services.dataset_service import DatasetService
 
 
 subfolders_and_titles = {
@@ -55,17 +58,16 @@ class MainFrame(tk.Frame):
     ):
         """ Display the file count for each model class """
 
-        # for c, files in dataset:
-        #     tk.Label(
-        #         self._centered_inner_frame,
-        #         font=("", 9), justify=tk.LEFT,
-        #         text=f"Para a classe {c.value}: {len(files)} imagens"
-        #     ).pack()
+        file_count_per_class = DatasetService.get_file_count_per_class_in(dataset)
 
-    def display_model_folders_and_files_infos(
-        self,
-        infos: aliases.Datasets
-    ):
+        for clasz, file_count in file_count_per_class.items():
+            tk.Label(
+                self._centered_inner_frame,
+                font=("", 9), justify=tk.LEFT,
+                text=f"Para a classe {clasz.value}: {file_count} imagens"
+            ).pack()
+
+    def display_datasets_infos(self, infos: aliases.Datasets):
         """
         Creates widgets on screen to display the files infos
         """
@@ -80,9 +82,13 @@ class MainFrame(tk.Frame):
             tk.Label(self._centered_inner_frame, text=title).pack()
             self._display_dataset_infos(infos[subfolder])
 
-    def display_no_folder_and_files_message(self):
+    def _clear_inner_frame_then_display_message(self, message: str):
         self._clear_inner_frame()
 
-        tk.Label(
-            self._centered_inner_frame,
-            text="Nenhum diretório escolhido").pack()
+        tk.Label(self._centered_inner_frame, text=message).pack()
+
+    def display_no_folder_and_files_message(self):
+        self._clear_inner_frame_then_display_message("Nenhum diretório escolhido")
+
+    def display_loading_message(self):
+        self._clear_inner_frame_then_display_message("Lendo arquivos...")
