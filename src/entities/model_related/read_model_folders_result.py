@@ -5,6 +5,6 @@ from globals import aliases
 
 
 @dataclass
-class ReadDirResult:
+class ReadModelFoldersResult:
     error: Union[str, None] = None
-    folder_classes_and_files: Union[aliases.FoldersClassesAndFiles, None] = None
+    folders_classes_and_files: Union[aliases.FoldersClassesAndFiles, None] = None

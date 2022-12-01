@@ -1,12 +1,14 @@
 import os
+import tensorflow as tf
 import tkinter.filedialog as tk_files
+
 from dataclasses import dataclass
 from typing import Union
 
 from globals import aliases, configs
 from entities.model_related.model_classes import ModelClasses
 from entities.model_related.expected_subfolders import ExpectedSubfolders
-from entities.model_related.read_model_folders_result import ReadModelFoldersResult
+from entities.model_related.read_datasets_result import ReadDatasetsResult
 
 
 @dataclass
@@ -15,7 +17,7 @@ class MainFolderValidationResult:
     error: Union[str, None] = None
 
 
-class FoldersAndFilesService:
+class DatasetService:
     @staticmethod
     def _validate_model_main_folder(folder_path: str) -> MainFolderValidationResult:
         """
@@ -48,41 +50,28 @@ class FoldersAndFilesService:
         return MainFolderValidationResult(is_valid=True)
 
     @staticmethod
-    def _is_file_an_allowed_image(file_name: str) -> bool:
-        """
-        Check if the file extension is one 
-        of the allowed ones
-        """
-
-        _, file_extension = os.path.splitext(file_name)
-        return file_extension in configs.ALLOWED_IMAGE_FILE_TYPES
-
+    def _read_dataset_from(path: str) -> aliases.Dataset:
+        return tf.keras.utils.image_dataset_from_directory(
+            path,
+            labels="inferred",
+            label_mode="categorical",
+            color_mode="rgb",
+            image_size=configs.MODEL_IMAGES_SIZE,
+            class_names=[c.value for c in ModelClasses]
+        )
+    
     @staticmethod
-    def _get_classes_and_corresponding_files_from(
-        folder_path: str
-    ) -> aliases.FoldersClassesAndFiles:
-        """
-        Read the selected directory content and
-        the contents of the expected directories
-        """
-
-        result: aliases.FoldersClassesAndFiles = {}
+    def _read_datasets_from(path: str) -> aliases.Datasets:
+        datasets: aliases.Datasets = {}
 
         for subfolder in ExpectedSubfolders:
-            subfolder_path = os.path.join(folder_path, subfolder.value)
-            result[subfolder] = {}
+            subfolder_path = os.path.join(path, subfolder.value)
+            datasets[subfolder] = DatasetService._read_dataset_from(subfolder_path)
 
-            for clasz in ModelClasses:
-                class_folder_path = os.path.join(subfolder_path, clasz.value)
-                class_folder_content = os.listdir(class_folder_path)
-
-                result[subfolder][clasz] = list(
-                    filter(FoldersAndFilesService._is_file_an_allowed_image, class_folder_content))
-
-        return result
+        return datasets
 
     @staticmethod
-    def read_model_folders_and_files() -> ReadModelFoldersResult:
+    def read_datasets() -> ReadDatasetsResult:
         """
         Ask user for the directory that contains the 
         directories with the files for model training,
@@ -96,14 +85,14 @@ class FoldersAndFilesService:
                 title="Escolha a pasta que contém os arquivos de treino",
             )
 
-            validation_result = FoldersAndFilesService._validate_model_main_folder(folder_path)
+            validation_result = DatasetService._validate_model_main_folder(folder_path)
 
             if not validation_result.is_valid:
-                return ReadModelFoldersResult(error=validation_result.error)
+                return ReadDatasetsResult(error=validation_result.error)
 
-            read_result = FoldersAndFilesService._get_classes_and_corresponding_files_from(folder_path)
+            datasets = DatasetService._read_datasets_from(folder_path)
 
-            return ReadModelFoldersResult(folders_classes_and_files=read_result)
+            return ReadDatasetsResult(datasets=datasets)
         except Exception as e:
             print(f"Exception on MultipleFilesService.read_model_folders_and_files: {e}")
-            return ReadModelFoldersResult(error="Um erro inesperado aconteceu")
+            return ReadDatasetsResult(error="Um erro inesperado aconteceu")

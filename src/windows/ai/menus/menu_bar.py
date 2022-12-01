@@ -1,6 +1,8 @@
 import tkinter as tk
 
-from globals import events
+from windows.ai.menus.files_menu import FilesMenu
+from windows.ai.menus.model_menu import ModelMenu
+
 
 class MenuBar(tk.Menu):
     """ 
@@ -11,12 +13,11 @@ class MenuBar(tk.Menu):
     def __init__(self, parent: tk.Toplevel):
         super().__init__(parent)
 
+        self._files_menu = FilesMenu(self)
+        self._model_menu = ModelMenu(self)
+
         self._add_menu_items()
 
     def _add_menu_items(self):
-        self.add_command(
-            label="Ler diretório",
-            command=self._open_dir)
-
-    def _open_dir(self):
-        events.read_model_main_directory_button_clicked.emit()
+        self.add_cascade(label="Arquivos", menu=self._files_menu)
+        self.add_cascade(label="Modelo", menu=self._model_menu)

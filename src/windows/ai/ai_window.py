@@ -3,12 +3,12 @@ import tkinter.messagebox as tk_boxes
 from typing import Union
 
 from globals import events, aliases, configs
-from windows.ai.components.operations_frame import OperationsFrame
 
 from windows.ai.menus.menu_bar import MenuBar
-from windows.ai.components.files_infos_frame import FilesInfosFrame
+from windows.ai.components.main_frame import MainFrame
 
-from services.folders_and_files_service import FoldersAndFilesService
+from services.model_service import ModelService
+from services.dataset_service import DatasetService
 
 
 class AiWindow(tk.Toplevel):
@@ -17,7 +17,7 @@ class AiWindow(tk.Toplevel):
     related things and operations
     """
 
-    _folders_classes_and_files: Union[aliases.FoldersClassesAndFiles, None] = None
+    _model_datasets: Union[aliases.Datasets, None] = None
 
     def __init__(self):
         super().__init__()
@@ -29,18 +29,12 @@ class AiWindow(tk.Toplevel):
         self.update()
 
         self._init_components()
-
         self._handle_events()
 
     def _init_components(self):
         self.config(menu=MenuBar(self))
-        self._files_infos_frame = FilesInfosFrame(self)
-        self._operations_frame = OperationsFrame(self)
-
-        self._files_infos_frame.pack(
-            fill=tk.Y, side=tk.LEFT, anchor=tk.CENTER)
-        self._operations_frame.pack(
-            fill=tk.Y, side=tk.RIGHT, anchor=tk.CENTER)
+        self._main_frame = MainFrame(self)
+        self._main_frame.display_no_folder_and_files_message()
 
     def _handle_events(self):
         events.read_model_main_directory_button_clicked.subscribe(
@@ -57,19 +51,24 @@ class AiWindow(tk.Toplevel):
         validation folders with the model images
         """
 
-        result = FoldersAndFilesService.read_model_related_folders_and_files()
+        result = DatasetService.read_datasets()
 
         if result.error is not None:
-            tk_boxes.showerror("Falha ao treinar modelo", message=result.error)
+            tk_boxes.showerror("Falha ao ler diretório", message=result.error)
             return
 
-        self._folders_classes_and_files = result.folder_classes_and_files
+        self._model_datasets = result.datasets
 
-        self._files_infos_frame.display_folders_classes_and_files_infos(self._folders_classes_and_files)
-        self._operations_frame.display_things()
+        self._main_frame.display_model_folders_and_files_infos(self._model_datasets)
 
     def _on_train_neural_network_button_clicked(self):
-        self._operations_frame.hide_things()
+        if self._model_datasets is None:
+            tk_boxes.showwarning(message="Necessário ler antes um diretório com os arquivos para o treinamento")
+            return
+
+        self._model = ModelService.build_model(self._model_datasets)
 
     def _on_train_normal_classifier_button_clicked(self):
-        self._operations_frame.hide_things()
+        if self._model_datasets is None:
+            tk_boxes.showwarning(message="Necessário ler antes um diretório com os arquivos para o treinamento")
+            return
