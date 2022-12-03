@@ -6,7 +6,8 @@ from globals import configs, aliases, events
 
 from windows.images.menus.menu_bar import MenuBar
 from windows.images.components.canvas import Canvas
-from windows.images.helpers.rectangle_drawer import RectangleDrawer
+
+from helpers.rectangle_drawer import RectangleDrawer
 
 from services.image_service import ImageService
 from services.correlation_service import CorrelationService
