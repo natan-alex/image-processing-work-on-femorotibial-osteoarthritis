@@ -41,17 +41,23 @@ class Event(Generic[T]):
 
 select_image_button_clicked = Event()
 clear_image_button_clicked = Event()
+
 enter_selection_mode_button_clicked = Event()
 clear_selection_button_clicked = Event()
 leave_selection_mode_button_clicked = Event()
+
 show_cropped_image_button_clicked = Event()
 save_cropped_image_button_clicked = Event()
+
 find_cross_correlation_button_clicked = Event()
-equalize_histogram_button_clicked = Event()
-cross_correlation_calculated = Event()
+
 read_model_main_directory_button_clicked = Event()
+
 histogram_equalization_button_clicked = Event()
 horizontal_mirroring_button_clicked = Event()
+
+load_saved_model_button_clicked = Event()
+
 train_neural_network_button_clicked = Event()
 train_normal_classifier_button_clicked = Event()
 
