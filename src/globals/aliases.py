@@ -12,3 +12,4 @@ Datasets = Dict[ExpectedSubfolders, Dataset]
 ClassFileCount = Dict[ModelClasses, int]
 ClassesAndFiles = Dict[ModelClasses, List[str]]
 FoldersClassesAndFiles = Dict[ExpectedSubfolders, ClassesAndFiles]
+Model = tf.keras.Model
