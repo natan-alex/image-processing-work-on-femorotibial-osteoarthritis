@@ -1,5 +1,3 @@
-import re
-
 import tkinter as tk
 
 from globals import aliases
@@ -60,7 +58,7 @@ class MainFrame(tk.Frame):
     def _create_label_with_dataset_infos(self, dataset: aliases.Dataset):
         """ Display the file count for each model class """
 
-        file_count_per_class = DatasetService.get_file_count_per_class_in(dataset)
+        file_count_per_class = DatasetService.get_file_count_per_class_for(dataset)
 
         for clasz, file_count in file_count_per_class.items():
             tk.Label(
@@ -68,7 +66,7 @@ class MainFrame(tk.Frame):
                 text=f"Para a classe {clasz.value}: {file_count} imagens"
             ).pack()
 
-    def show_datasets_infos(self, infos: aliases.Datasets):
+    def show_datasets_infos(self, datasets: aliases.Datasets):
         """ Creates widgets on centered frame to display the datasets infos """
 
         old_frame = self._centered_frame
@@ -79,32 +77,29 @@ class MainFrame(tk.Frame):
         for subfolder, title in subfolders_and_titles.items():
             tk.Label(self._centered_frame, text=title).pack()
 
-            self._create_label_with_dataset_infos(infos[subfolder])
+            self._create_label_with_dataset_infos(datasets[subfolder])
 
         old_frame.destroy()
         self._centered_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
 
-    def _clear_centered_frame_and_display_message(self, message: str):
+    def clear_and_show_message(self, message: str):
         self._clear_centered_frame()
 
         tk.Label(self._centered_frame, text=message).pack()
 
-    def show_no_folder_and_files_message(self):
-        self._clear_centered_frame_and_display_message("Nenhum diretório escolhido")
 
-    def show_loading_message(self):
-        self._clear_centered_frame_and_display_message("Lendo arquivos...")
-
-    def show_progress_message(self):
-        self._clear_centered_frame_and_display_message("Progresso:")
-
-
-    def _before_write_to_stdout_callback(self, params: BeforeWriteCallbackParams):
+    def _before_write_to_stdout_callback(self, params: BeforeWriteCallbackParams) -> str:
         """ 
         Executed before something is writen to the redirected stdout.
         Manipulate the tensorflow output to show it on screen
         """
+
+        if (
+            not TensorflowOutputHelper.is_epoch_indicator(params.content_to_write) and
+            not TensorflowOutputHelper.is_training_output(params.content_to_write)
+        ):
+            return ""
 
         if (
             self._last_inserted_label is not None and
@@ -141,6 +136,3 @@ class MainFrame(tk.Frame):
         if self._stdout_redirected:
             self._output_service.undo_stdout_redirection()
             self._stdout_redirected = False
-
-    def show_model_infos(self, model: aliases.Model):
-        pass
