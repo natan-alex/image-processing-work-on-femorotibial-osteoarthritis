@@ -1,5 +1,4 @@
 import os
-import numpy as np
 import tensorflow as tf
 import tkinter.filedialog as tk_files
 
@@ -99,15 +98,15 @@ class DatasetService:
             return ReadDatasetsResult(error="Um erro inesperado aconteceu")
 
     @staticmethod
-    def get_file_count_per_class_in(
+    def get_file_count_per_class_for(
         dataset: aliases.Dataset
     ) -> aliases.ClassFileCount:
         file_count: aliases.ClassFileCount = {c:0 for c in ModelClasses}
 
-        for _, labels_batch in dataset:
-            for labels in labels_batch:
-                index = np.where(labels == 1)[0][0]
-                clasz = dataset.class_names[index]
-                file_count[clasz] += 1
+        for file_path in dataset.file_paths:
+            parent_path = os.path.dirname(file_path)
+            class_folder_name = os.path.basename(parent_path)
+            clasz = ModelClasses(class_folder_name)
+            file_count[clasz] += 1
 
         return file_count
