@@ -60,6 +60,7 @@ load_saved_model_button_clicked = Event()
 
 train_neural_network_button_clicked = Event()
 train_normal_classifier_button_clicked = Event()
+evaluate_neural_network_button_clicked = Event()
 
 
 @dataclass
