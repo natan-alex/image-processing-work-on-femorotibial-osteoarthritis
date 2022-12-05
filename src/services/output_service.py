@@ -12,11 +12,10 @@ class BeforeWriteCallbackParams:
 
 @dataclass
 class AfterWriteCallbackParams:
-    wrote: str
-    inserted_widget: tk.Label
+    wrote: Union[str, None]
 
 
-BeforeWriteCallback = Union[Callable[[BeforeWriteCallbackParams], str], None]
+BeforeWriteCallback = Union[Callable[[BeforeWriteCallbackParams], Union[str, None]], None]
 AfterWriteCallback = Union[Callable[[AfterWriteCallbackParams], None], None]
 
 
@@ -34,21 +33,28 @@ class StdoutRedirector(TextIO):
         self._after_write_callback = after_write_callback
 
     def write(self, string: str):
+        to_write = None
+
         if self._before_write_callback is not None:
-            string = self._before_write_callback(
-                BeforeWriteCallbackParams(content_to_write=string))
+            params = BeforeWriteCallbackParams(content_to_write=string)
+            to_write = self._before_write_callback(params)
 
-        label = tk.Label(self._destination, text=string)
-        label.pack()
+        if to_write is not None:
+            self._last_inserted_widget = tk.Label(self._destination, text=to_write)
+            self._last_inserted_widget.pack()
 
-        self._old_stdout.write(f"{string}\n")
+            self._old_stdout.write(to_write)
 
         if self._after_write_callback is not None:
-            self._after_write_callback(
-                AfterWriteCallbackParams(wrote=string, inserted_widget=label))
+            params = AfterWriteCallbackParams(wrote=string)
+            self._after_write_callback(params)
 
     def flush(self):
         self._destination.update()
+
+    @property
+    def last_inserted_widget(self) -> Union[tk.Label, None]:
+        return self._last_inserted_widget
 
 class OutputService:
     def __init__(self) -> None:
@@ -63,7 +69,7 @@ class OutputService:
     ):
         self._old_stdout = sys.stdout
         self._redirector = StdoutRedirector(
-            widget, 
+            widget,
             old_stdout=self._old_stdout,
             before_write_callback=before_write_callback,
             after_write_callback=after_write_callback)
@@ -71,3 +77,12 @@ class OutputService:
 
     def undo_stdout_redirection(self):
         sys.stdout = self._old_stdout
+
+    def undo_last_insertion(self):
+        if self._redirector is None:
+            return
+
+        widget = self._redirector.last_inserted_widget
+
+        if widget is not None:
+            widget.destroy()

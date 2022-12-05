@@ -45,14 +45,16 @@ class Popup(tk.Toplevel):
             self._show_invalid_input_message()
             return
         
-        if self._input_entered is not None:
-            self._input_entered.set(True)
+        if self._valid_epochs_entered is not None:
+            self._valid_epochs_entered.set(True)
 
-    def wait_input(self):
-        self._input_entered = tk.BooleanVar(value=False)
+    def get_epochs_then_destroy(self):
+        self._valid_epochs_entered = tk.BooleanVar(value=False)
 
-        self.wait_variable(self._input_entered)
+        self.wait_variable(self._valid_epochs_entered)
 
         epochs = int(self._entry.get())
+
+        self.destroy()
 
         return epochs

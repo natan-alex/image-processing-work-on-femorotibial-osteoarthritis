@@ -27,7 +27,7 @@ class MainWindow(tk.Tk):
 
         images_button = tk.Button(self, text="Imagens")
         images_button.configure(borderwidth=1)
-        images_button.configure(font=("", 15))
+        images_button.configure(font=("", 13))
         images_button.configure(command=self._create_images_window)
         images_button.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
 
@@ -36,9 +36,9 @@ class MainWindow(tk.Tk):
 
         images_button = tk.Button(self, text="IA")
         images_button.configure(borderwidth=1)
-        images_button.configure(font=("", 15))
+        images_button.configure(font=("", 13))
         images_button.configure(command=self._create_ai_related_window)
-        images_button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        images_button.place(relx=0.5, rely=0.55, anchor=tk.CENTER)
 
     def _create_images_window(self):
         self._images_window = ImagesWindow()

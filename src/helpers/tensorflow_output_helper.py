@@ -1,44 +1,34 @@
 import re
 
-
 words_and_replacements = {
     "Epoch": "Época",
     "accuracy": "acurácia",
     "loss": "perda",
-    "precision": "precisão"
+    "precision": "precisão",
+    "step": "etapa",
+    "ETA": "Tempo estimado de término",
 }
 
 
 class TensorflowOutputHelper:
     @staticmethod
     def is_epoch_indicator(s: str) -> bool:
-        pattern = re.compile(r"^(Epoch|Época)\s\d*/\d*$")
+        pattern = re.compile(r"^Epoch \d*/\d*$")
         return pattern.match(s) is not None
 
     @staticmethod
-    def is_training_output(s: str) -> bool:
-        keys = filter(lambda k: k != "Epoch", words_and_replacements.keys())
-        return all(key in s for key in keys)
+    def is_progress_output(s: str) -> bool:
+        pattern = r"\[[.>=]*\]"
+        return re.search(pattern, s) is not None
 
     @staticmethod
     def _remove_start_symbols_from(s: str) -> str:
         match = re.search(r"[0-9]", s)
-
-        if match:
-            return s[match.start():]
-
-        return s
+        return s[match.start():] if match else s
 
     @staticmethod
-    def _break_things_into_separated_lines(s: str) -> str:
-        slices = s.split('-')
-        result = ""
-
-        if slices:
-            for slice in slices:
-                result += slice + '\n'
-
-        return result
+    def _break_into_separated_lines(s: str) -> str:
+        return "\n".join(s.split("-"))
 
     @staticmethod
     def manipulate_to_show(s: str):
@@ -50,4 +40,4 @@ class TensorflowOutputHelper:
         for word, replacement in words_and_replacements.items():
             result = result.replace(word, replacement)
 
-        return TensorflowOutputHelper._break_things_into_separated_lines(result)
+        return TensorflowOutputHelper._break_into_separated_lines(result)

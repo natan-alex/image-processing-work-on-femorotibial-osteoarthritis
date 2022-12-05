@@ -62,6 +62,8 @@ train_neural_network_button_clicked = Event()
 train_normal_classifier_button_clicked = Event()
 evaluate_neural_network_button_clicked = Event()
 
+plot_confusion_matrix_button_clicked = Event()
+
 
 @dataclass
 class RectangleFinishedDrawingEventInfos:

@@ -2,6 +2,7 @@ import tkinter as tk
 
 from windows.ai.menus.files_menu import FilesMenu
 from windows.ai.menus.model_menu import ModelMenu
+from windows.ai.menus.metrics_menu import MetricsMenu
 
 
 class MenuBar(tk.Menu):
@@ -15,9 +16,11 @@ class MenuBar(tk.Menu):
 
         self._files_menu = FilesMenu(self)
         self._model_menu = ModelMenu(self)
+        self._metrics_menu = MetricsMenu(self)
 
         self._add_menu_items()
 
     def _add_menu_items(self):
         self.add_cascade(label="Arquivos", menu=self._files_menu)
         self.add_cascade(label="Modelo", menu=self._model_menu)
+        self.add_cascade(label="Métricas", menu=self._metrics_menu)
