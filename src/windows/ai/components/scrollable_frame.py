@@ -2,6 +2,8 @@ import tkinter as tk
 
 
 class ScrollableFrame(tk.Frame):
+    """ A frame that have a scrollbar """
+
     def __init__(self, parent: tk.Frame):
         super().__init__(parent)
 

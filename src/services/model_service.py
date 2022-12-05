@@ -15,8 +15,7 @@ from entities.model_related.expected_subfolders import ExpectedSubfolders
 from entities.model_related.model_evaluation_metrics import ModelEvaluationMetrics
 
 
-import sys
-out = sys.stdout
+np.seterr(divide="ignore", invalid="ignore")
 
 
 class ModelService:
@@ -65,6 +64,8 @@ class ModelService:
 
     @staticmethod
     def _create_model_with_layers() -> aliases.Model:
+        """ Add layers on top of inceptionV3 model to generate a new one """
+
         input_layer = tf.keras.Input(shape=configs.MODEL_IMAGES_SIZE + (3,))
 
         inception_model = tf.keras.applications.InceptionV3(
@@ -90,6 +91,11 @@ class ModelService:
         epochs: int = configs.MODEL_TRAINING_EPOCHS,
         start_from_checkpoint = False
     ) -> Union[aliases.Model, None]:
+        """
+        Create model from checkpoint or from inception model,
+        compile it to get metrics and train it with the train dataset
+        """
+
         try:
             if start_from_checkpoint and ModelService.has_fit_checkpoint():
                 model = ModelService.load_model_from_checkpoint()
@@ -115,7 +121,14 @@ class ModelService:
     def evaluate_model_and_get_metrics(
         model: aliases.Model, datasets: aliases.Datasets
     ) -> ModelEvaluationMetrics:
-        test_dataset = datasets[ExpectedSubfolders.TEST].take(5)
+        """
+        Evaluate the model using the test dataset
+        Predict the classes for the test images, get the
+        maximum values on predictions to know the most "strong"
+        class and group everything to calculate the metrics
+        """
+
+        test_dataset = datasets[ExpectedSubfolders.TEST]
 
         y_prediction = model.predict(test_dataset)
 
@@ -128,24 +141,40 @@ class ModelService:
         return ModelService._calculate_and_get_metrics(predicted_classes, classes)
 
     @staticmethod
+    def _manipulate_to_show(array: aliases.NpArray) -> float:
+        """ Manipulate the score_per_class metric removing the invalid things, get mean and round it """
+
+        replaced = np.nan_to_num(array)
+        mean = float(np.mean(replaced))
+        return round(mean, 3)
+
+    @staticmethod
     def _calculate_and_get_metrics(
         predicted_classes: aliases.NpArray,
         classes: aliases.NpArray
     ) -> ModelEvaluationMetrics:
+        """ Generate confusion matrix and get scores """
+
         matrix = metrics.confusion_matrix(predicted_classes, classes)
-        accuracy = metrics.accuracy_score(predicted_classes, classes)
-        precision = metrics.precision_score(predicted_classes, classes, average="micro")
-        f1_score = metrics.f1_score(predicted_classes, classes, average="micro")
-        specificity_score = metrics.recall_score(predicted_classes, classes, average="micro")
-        sensitivity_score = matrix[0,0] / (matrix[0,0] + matrix[0,1])
+
+        fp = matrix.sum(axis=0) - np.diag(matrix)  
+        fn = matrix.sum(axis=1) - np.diag(matrix)
+        tp = np.diag(matrix)
+        tn = matrix.sum() - (fp + fn + tp)
+
+        precision_per_class = tp / (tp + fp)
+        accuracy_per_class = (tp + tn) / (tp + tn + fp + fn)
+        f1_score_per_class = (2 * tp) / (2 * tp + fp + fn)
+        specificity_per_class = tn / (tn + fp)
+        sensitivity_per_class = tp / (tp + fn)
 
         return ModelEvaluationMetrics(
             confusion_matrix=matrix,
-            precision_score=precision,
-            accuracy_score=accuracy,
-            specificity_score=specificity_score,
-            sensitivity_score=sensitivity_score,
-            f1_score=f1_score,
+            precision_score=ModelService._manipulate_to_show(precision_per_class),
+            accuracy_score=ModelService._manipulate_to_show(accuracy_per_class),
+            specificity_score=ModelService._manipulate_to_show(specificity_per_class),
+            sensitivity_score=ModelService._manipulate_to_show(sensitivity_per_class),
+            f1_score=ModelService._manipulate_to_show(f1_score_per_class),
         )
 
     @staticmethod

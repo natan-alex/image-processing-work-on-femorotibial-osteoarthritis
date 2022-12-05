@@ -20,6 +20,12 @@ AfterWriteCallback = Union[Callable[[AfterWriteCallbackParams], None], None]
 
 
 class StdoutRedirector(TextIO):
+    """
+    The class used to write stdout to a tkinter frame.
+    Replace stdout and print content on frame by creating
+    label frames inside it
+    """
+
     def __init__(
         self,
         destination: tk.Frame,
@@ -33,6 +39,11 @@ class StdoutRedirector(TextIO):
         self._after_write_callback = after_write_callback
 
     def write(self, string: str):
+        """
+        Call before_callback to allow entry manipulation.
+        Add label widgets to destination to print stdout content
+        """
+
         to_write = None
 
         if self._before_write_callback is not None:
@@ -67,6 +78,8 @@ class OutputService:
         before_write_callback: BeforeWriteCallback = None,
         after_write_callback: AfterWriteCallback = None
     ):
+        """ Assign stdout to StdoutRedirector """
+
         self._old_stdout = sys.stdout
         self._redirector = StdoutRedirector(
             widget,

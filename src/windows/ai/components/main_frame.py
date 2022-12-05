@@ -1,9 +1,5 @@
 import tkinter as tk
 
-import seaborn as sn
-
-import matplotlib.pyplot as plt
-
 from globals import aliases
 
 from entities.model_related.expected_subfolders import ExpectedSubfolders
@@ -50,7 +46,7 @@ class MainFrame(tk.Frame):
             tk.Label(self._datasets_infos_frame, font=("", 9), text=label_text).pack()
 
     def show_datasets_infos(self, datasets: aliases.Datasets):
-        """ Creates widgets on centered frame to display the datasets infos """
+        """ Creates widgets to display the datasets infos """
 
         self.clear_children()
 

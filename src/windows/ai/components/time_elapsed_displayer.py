@@ -15,6 +15,8 @@ class TimeElapsedDisplayer:
         return f"{h} horas {m} minutos e {s} segundos"
 
     def _update_label(self):
+        """ Measure time elapsed from the begining and show it formatted """
+
         if not self._is_activated or self._label is None:
             return
 
@@ -24,6 +26,8 @@ class TimeElapsedDisplayer:
         self._label.after(self._interval_in_seconds * 1000, self._update_label)
 
     def enable(self):
+        """ Create label that recursively self update after in an interval """
+
         self._start_time = time.time()
         self._is_activated = True
         self._label = tk.Label(self._parent)
@@ -32,6 +36,8 @@ class TimeElapsedDisplayer:
         self._update_label()
 
     def disable(self):
+        """ Stop interval """
+
         self._is_activated = False
 
         if self._label is not None:

@@ -63,7 +63,8 @@ class AiWindow(tk.Toplevel):
         """
         Ask the user to select a directory and validate
         its folder structure looking for train, test and
-        validation folders with the model images
+        validation folders with the model images.
+        After all show the file count per class infos
         """
 
         self._main_frame.clear_and_show_message("Lendo diretório...")
@@ -95,6 +96,12 @@ class AiWindow(tk.Toplevel):
             tk_boxes.showinfo(message="Treinamento finalizado com sucesso porém não foi possível salvar o modelo")
 
     def _on_train_neural_network_button_clicked(self):
+        """
+        Clear screen to show elapsed time and redirect tensorflow output.
+        Ask user if start from previous checkpoint (if exists) and for the number
+        of epochs to train the model
+        """
+
         if self._model_datasets is None:
             tk_boxes.showwarning(message="Necessário ler antes um diretório com os arquivos para o treinamento, teste e validação")
             return
@@ -116,6 +123,11 @@ class AiWindow(tk.Toplevel):
         self._save_model_and_show_info()
 
     def _on_evaluate_neural_network_button_clicked(self):
+        """
+        Clear screen to show elapsed time and redirect tensorflow output.
+        After all show the metrics calculated by evaluation the test dataset
+        """
+
         if self._model_datasets is None or self._model is None:
             tk_boxes.showwarning(message="Necessário ler antes um diretório com os arquivos para o treinamento e teste ou carregar um modelo")
             return
@@ -137,6 +149,8 @@ class AiWindow(tk.Toplevel):
             return
 
     def _on_load_saved_model_button_clicked(self):
+        """ Load saved model from file system """
+
         self._model = ModelService.load_saved_model()
 
         if self._model is None:
@@ -146,6 +160,8 @@ class AiWindow(tk.Toplevel):
         tk_boxes.showinfo(message="Modelo encontrado e carregado com sucesso")
 
     def _on_plot_confusion_matrix_button_clicked(self):
+        """ Plot the confusion matrix """
+
         if self._evaluation_result is not None:
             matrix = self._evaluation_result.confusion_matrix
             ModelService.plot_confusion_matrix(matrix)

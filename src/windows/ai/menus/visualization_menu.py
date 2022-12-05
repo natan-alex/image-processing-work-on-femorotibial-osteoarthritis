@@ -3,7 +3,7 @@ import tkinter as tk
 from globals import events
 
 
-class MetricsMenu(tk.Menu):
+class VisualizationMenu(tk.Menu):
     def __init__(self, parent: tk.Menu):
         super().__init__(parent, tearoff=False)
 

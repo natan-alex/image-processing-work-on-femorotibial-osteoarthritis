@@ -33,6 +33,8 @@ class Popup(tk.Toplevel):
             label.after(2000, label.destroy)
 
     def _ok_button_clicked(self):
+        """ Validate the epochs entry when user click to move on """
+
         epochs = 0
 
         try:
@@ -49,6 +51,8 @@ class Popup(tk.Toplevel):
             self._valid_epochs_entered.set(True)
 
     def get_epochs_then_destroy(self):
+        """ Keep waiting for the user to enter something valid """
+
         self._valid_epochs_entered = tk.BooleanVar(value=False)
 
         self.wait_variable(self._valid_epochs_entered)

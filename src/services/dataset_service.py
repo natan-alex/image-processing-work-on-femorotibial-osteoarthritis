@@ -51,6 +51,11 @@ class DatasetService:
 
     @staticmethod
     def _read_dataset_from(path: str) -> aliases.Dataset:
+        """ 
+        Use keras utility function to read the folders content and get 
+        images already on desired format
+        """
+
         return tf.keras.utils.image_dataset_from_directory(
             path,
             labels="inferred",
@@ -101,6 +106,11 @@ class DatasetService:
     def get_file_count_per_class_for(
         dataset: aliases.Dataset
     ) -> aliases.ClassFileCount:
+        """
+        Get file count per class based on file location.
+        The class of the image is the parent folder name
+        """
+
         file_count: aliases.ClassFileCount = {c:0 for c in ModelClasses}
 
         for file_path in dataset.file_paths:
