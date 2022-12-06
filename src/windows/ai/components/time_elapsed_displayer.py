@@ -1,44 +1,49 @@
-import tkinter as tk
-
 import time
 import datetime
+import tkinter as tk
+import multiprocessing as mp
 
 
 class TimeElapsedDisplayer:
-    def __init__(self, parent: tk.Frame, interval_in_seconds: int = 2):
+    def __init__(self, parent: tk.Frame):
         self._parent = parent
-        self._interval_in_seconds = interval_in_seconds if interval_in_seconds >= 1 else 2
-        self._is_activated = False
+        self._label = None
+        self._process = None
+        self._stop_event = None
 
-    def _format_elapsed_time(self, seconds: int) -> str:
-        h, m, s = str(datetime.timedelta(seconds=seconds)).split(':')
-        return f"{h} horas {m} minutos e {s} segundos"
+    def _update_time(self):
+        """ Measure time elapsed from the begining and display it formatted """
 
-    def _update_label(self):
-        """ Measure time elapsed from the begining and show it formatted """
+        elapsed_time = int(time.time() - self._start_time)
 
-        if not self._is_activated or self._label is None:
-            return
+        h, m, s = str(datetime.timedelta(seconds=elapsed_time)).split(':')
 
-        elapsed_time = time.time() - self._start_time
-        formatted = self._format_elapsed_time(int(elapsed_time))
-        self._label.configure(text=f"Tempo gasto: {formatted}")
-        self._label.after(self._interval_in_seconds * 1000, self._update_label)
+        label_text = f"Tempo gasto: {h} horas {m} minutos e {s} segundos"
 
-    def enable(self):
-        """ Create label that recursively self update after in an interval """
+        self._label.configure(text=label_text)
+        self._label.update()
 
-        self._start_time = time.time()
-        self._is_activated = True
+    def _keep_updating(self):
+        while not self._stop_event.is_set():
+            self._update_time()
+            time.sleep(1)
+
+    def start(self):
         self._label = tk.Label(self._parent)
-        self._label.pack(pady=20)
+        self._label.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
+        self._label.update()
 
-        self._update_label()
+        self._stop_event = mp.Event()
+        self._start_time = time.time()
 
-    def disable(self):
-        """ Stop interval """
+        self._process = mp.Process(target=self._keep_updating)
+        self._process.start()
 
-        self._is_activated = False
+    def stop(self):
+        print("deactivating")
 
-        if self._label is not None:
-            self._label.destroy()
+        if self._stop_event is not None:
+            self._stop_event.set()
+
+        if self._process is not None:
+            self._process.join()

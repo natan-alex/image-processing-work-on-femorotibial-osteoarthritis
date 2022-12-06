@@ -61,7 +61,7 @@ class DatasetService:
             labels="inferred",
             label_mode="categorical",
             color_mode="rgb",
-            image_size=configs.MODEL_IMAGES_SIZE,
+            image_size=configs.NEURAL_NETWORK_IMAGES_SIZE,
             class_names=[c.value for c in ModelClasses]
         )
 

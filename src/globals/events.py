@@ -56,13 +56,19 @@ read_model_main_directory_button_clicked = Event()
 histogram_equalization_button_clicked = Event()
 horizontal_mirroring_button_clicked = Event()
 
-load_saved_model_button_clicked = Event()
+load_neural_network_button_clicked = Event()
 
 train_neural_network_button_clicked = Event()
-train_normal_classifier_button_clicked = Event()
-evaluate_neural_network_button_clicked = Event()
+train_shallow_classifier_button_clicked = Event()
+train_xgboost_classifier_button_clicked = Event()
 
-plot_confusion_matrix_button_clicked = Event()
+evaluate_neural_network_button_clicked = Event()
+evaluate_xgboost_button_clicked = Event()
+evaluate_shallow_classifier_button_clicked = Event()
+
+plot_confusion_matrix_for_neural_network_button_clicked = Event()
+plot_confusion_matrix_for_xgboost_button_clicked = Event()
+plot_confusion_matrix_for_shallow_classifier_button_clicked = Event()
 
 
 @dataclass
