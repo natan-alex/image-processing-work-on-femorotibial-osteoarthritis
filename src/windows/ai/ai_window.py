@@ -48,7 +48,7 @@ class AiWindow(tk.Toplevel):
     def _init_components(self):
         self.config(menu=MenuBar(self))
         self._main_frame = MainFrame(self)
-        self._time_elapsed_displayer = TimeElapsedDisplayer(self._main_frame)
+        self._time_elapsed_displayer = TimeElapsedDisplayer()
         self._tensorflow_output_displayer = TensorflowOutputDisplayer(self._main_frame)
         self._main_frame.clear_and_show_message("Nada a ser exibido")
 

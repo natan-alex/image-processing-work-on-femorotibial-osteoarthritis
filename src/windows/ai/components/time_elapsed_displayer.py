@@ -4,12 +4,9 @@ import tkinter as tk
 import multiprocessing as mp
 
 
-class TimeElapsedDisplayer:
-    def __init__(self, parent: tk.Frame):
-        self._parent = parent
-        self._label = None
-        self._process = None
-        self._stop_event = None
+class TimeElapsedDisplayer(mp.Process):
+    def __init__(self):
+        super().__init__()
 
     def _update_time(self):
         """ Measure time elapsed from the begining and display it formatted """
@@ -23,21 +20,18 @@ class TimeElapsedDisplayer:
         self._label.configure(text=label_text)
         self._label.update()
 
-    def _keep_updating(self):
-        while not self._stop_event.is_set():
-            self._update_time()
-            time.sleep(1)
-
-    def start(self):
-        self._label = tk.Label(self._parent)
+    def run(self):
+        self._window = tk.Toplevel(width=120, height=20)
+        self._label = tk.Label(self._window)
         self._label.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
         self._label.update()
-
         self._stop_event = mp.Event()
         self._start_time = time.time()
 
-        self._process = mp.Process(target=self._keep_updating)
-        self._process.start()
+        while not self._stop_event.is_set():
+            self._update_time()
+
+            time.sleep(1)
 
     def stop(self):
         print("deactivating")
@@ -45,5 +39,5 @@ class TimeElapsedDisplayer:
         if self._stop_event is not None:
             self._stop_event.set()
 
-        if self._process is not None:
-            self._process.join()
+        self.join()
+        self._window.destroy()
